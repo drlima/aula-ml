@@ -41,8 +41,9 @@ nav.map a.on{color:var(--ink);background:var(--marker)}
 .widget{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;margin:22px 0 28px;box-shadow:0 8px 30px rgba(23,32,58,.06)}
 .widget h3{margin-top:0}
 .widget .ctrls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;margin:10px 0 14px;font-family:var(--disp);font-size:15px;font-weight:700}
-.widget label{display:flex;align-items:center;gap:10px}
-input[type=range]{accent-color:var(--grape);width:180px}
+.widget label{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+input[type=range]{accent-color:var(--grape);width:180px;max-width:100%}
+input[type=checkbox]{width:22px;height:22px;flex:0 0 auto}
 input[type=text]{font:inherit;font-size:17px;padding:10px 14px;border:2px solid var(--line);border-radius:10px;width:100%;background:var(--paper)}
 input[type=text]:focus,button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
 button{font-family:var(--disp);font-weight:700;font-size:15px;padding:10px 16px;border-radius:999px;border:2px solid var(--ink);background:var(--ink);color:#fff;cursor:pointer}
@@ -84,6 +85,19 @@ th{font-family:var(--disp);font-size:13px;letter-spacing:.08em;text-transform:up
 .formula .a{color:var(--marker)}.formula .b{color:#8BE9B4}
 textarea{width:100%;min-height:220px;font-family:var(--mono);font-size:14px;line-height:1.5;padding:14px;border-radius:12px;border:2px solid var(--line);background:#101627;color:#E6ECFF;resize:vertical}
 .console{font-family:var(--mono);font-size:14px;white-space:pre-wrap;background:var(--paper-2);border-radius:12px;padding:14px;min-height:60px;margin-top:10px}
+@media(max-width:700px){
+  /* sliders: ocupam a sobra da linha em vez de largura fixa */
+  input[type=range]{flex:1 1 150px;width:auto;min-width:130px;height:24px}
+  /* tabelas largas rolam dentro da propria caixa em vez de serem cortadas */
+  table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table tbody{display:table;width:max-content;min-width:100%}
+  /* SVG de viewBox largo: texto legivel depois da escala */
+  #svgLabels text{font-size:24px}
+  #svgReg text{font-size:25px}
+  #svgKnn text{font-size:26px}
+  /* com a fonte maior os rotulos do eixo y passam da borda do viewBox */
+  #svgReg{overflow:visible}
+}
 footer{padding:40px 0 60px;color:var(--ink-2);font-size:15px;text-align:center}
 .tag{display:inline-block;font-family:var(--disp);font-weight:700;font-size:13px;padding:3px 10px;border-radius:999px;background:var(--paper-2);color:var(--ink-2);margin-right:6px}
 </style>
@@ -378,7 +392,7 @@ function drawReg(){const a=+$("#slA").value,b=+$("#slB").value,svg=$("#svgReg");
   el("line",{x1:rx(R.a0),y1:ry(a*R.a0+b),x2:rx(R.a1),y2:ry(a*R.a1+b),stroke:"#7B61FF","stroke-width":4,"stroke-linecap":"round"},svg);
   apts.forEach(d=>el("circle",{cx:rx(d.a),cy:ry(d.p),r:8,fill:C.ink,stroke:"#fff","stroke-width":2},svg));
   $("#vA").textContent=a.toFixed(1).replace(".",",");$("#vB").textContent=b;$("#errV").textContent=fmt(Math.round(err))+" mil";
-  el("text",{x:R.W-R.pad,y:R.pad-10,"font-size":13,"text-anchor":"end",fill:"#7B61FF"},svg).textContent=`preço = ${a.toFixed(1)} × área ${b<0?"−":"+"} ${Math.abs(b)}`}
+  el("text",{x:R.W-R.pad,y:R.pad-10,"font-size":13,"text-anchor":"end",fill:"#7B61FF"},svg).textContent=`preço = ${a.toFixed(1).replace(".",",")} × área ${b<0?"−":"+"} ${Math.abs(b)}`}
 $("#slA").oninput=drawReg;$("#slB").oninput=drawReg;drawReg();
 $("#fitBtn").onclick=()=>{const n=apts.length,mx=apts.reduce((s,d)=>s+d.a,0)/n,my=apts.reduce((s,d)=>s+d.p,0)/n;let num=0,den=0;apts.forEach(d=>{num+=(d.a-mx)*(d.p-my);den+=(d.a-mx)**2});const A=num/den,B=my-A*mx;
   const a0=+$("#slA").value,b0=+$("#slB").value;let t=0;const step=()=>{t+=0.03;const e=1-Math.pow(1-Math.min(t,1),3);$("#slA").value=(a0+(A-a0)*e).toFixed(2);$("#slB").value=Math.round(b0+(B-b0)*e);drawReg();if(t<1)requestAnimationFrame(step)};step()};
@@ -390,7 +404,7 @@ function drawKnn(){const svg=$("#svgKnn"),{W,H,pad}=K6,k=+$("#slK").value;svg.in
   if($("#mapToggle").checked){const g=el("g",{"shape-rendering":"crispEdges"},svg);const nx=46,ny=28,cw=(W-2*pad)/nx,ch=(H-2*pad)/ny;for(let i=0;i<nx;i++)for(let j=0;j<ny;j++){const x=P.x0+(i+.5)/nx*(P.x1-P.x0),y=P.y0+(j+.5)/ny*(P.y1-P.y0);const r=knn({x,y},fruits,k);el("rect",{x:sx(x,W,pad)-cw/2,y:sy(y,H,pad)-ch/2,width:cw+.5,height:ch+.5,fill:r.c?C.teal:C.coral,opacity:.16},g)}}
   axes(svg,W,H,pad,"peso (g)","doçura");
   if(novo){const r=knn(novo,fruits,k);r.nb.forEach(o=>el("line",{x1:sx(novo.x,W,pad),y1:sy(novo.y,H,pad),x2:sx(o.f.x,W,pad),y2:sy(o.f.y,H,pad),stroke:C.ink,"stroke-width":1.5,"stroke-dasharray":"4 3",opacity:.6},svg));
-    $("#knnOut").innerHTML=`Votação entre os ${k} vizinhos: <span style="color:${C.teal}">${r.v1} maçã</span> × <span style="color:${C.coral}">${r.v0} laranja</span> → o modelo diz <strong>${r.c?"maçã":"laranja"}</strong>.`}
+    $("#knnOut").innerHTML=`${k===1?"Votação com o vizinho mais próximo":`Votação entre os ${k} vizinhos`}: <span style="color:${C.teal}">${r.v1} maçã</span> × <span style="color:${C.coral}">${r.v0} laranja</span> → o modelo diz <strong>${r.c?"maçã":"laranja"}</strong>.`}
   fruits.forEach(f=>el("circle",{cx:sx(f.x,W,pad),cy:sy(f.y,H,pad),r:7,fill:fcol(f),stroke:"#fff","stroke-width":1.5},svg));
   if(novo){el("circle",{cx:sx(novo.x,W,pad),cy:sy(novo.y,H,pad),r:11,fill:"#fff",stroke:C.ink,"stroke-width":3},svg);el("text",{x:sx(novo.x,W,pad),y:sy(novo.y,H,pad)-16,"font-size":13,"text-anchor":"middle"},svg).textContent="?"}}
 $("#svgKnn").addEventListener("click",e=>{const svg=e.currentTarget,r=svg.getBoundingClientRect(),px=(e.clientX-r.left)/r.width*K6.W,py=(e.clientY-r.top)/r.height*K6.H;
