@@ -120,6 +120,14 @@ code .n{color:var(--coral)}
 .fig img{display:block;width:100%;height:auto}
 .fig.busy{opacity:.5}
 .figmsg{padding:20px 18px;font-family:var(--disp);font-weight:700;font-size:15px;line-height:1.4;color:var(--bad);text-align:center}
+/* lista de referencias */
+.refs{margin:6px 0 30px;padding:0;list-style:none}
+.refs li{border-top:1px solid var(--line);padding:13px 0}
+.refs li:last-child{border-bottom:1px solid var(--line)}
+.refs a{font-family:var(--disp);font-weight:700;font-size:18px;text-decoration:none}
+.refs a:hover{text-decoration:underline}
+.refs .why{display:block;font-size:16px;color:var(--ink-2);margin-top:3px;line-height:1.45}
+h3.refgroup{margin:30px 0 0;font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
 footer{padding:40px 0 60px;color:var(--ink-2);font-size:15px;text-align:center}
 .tag{display:inline-block;font-family:var(--disp);font-weight:700;font-size:13px;padding:3px 10px;border-radius:999px;background:var(--paper-2);color:var(--ink-2);margin-right:6px}
 </style>
@@ -127,7 +135,7 @@ footer{padding:40px 0 60px;color:var(--ink-2);font-size:15px;text-align:center}
 <body>
 
 <nav class="map" aria-label="Mapa da aula"><div class="wrap">
-<a href="#s1">1 Regras</a><a href="#s2">2 Aprender</a><a href="#s3">3 Gabarito</a><a href="#s4">4 Rótulo ou número</a><a href="#s5">5 Modelo = fórmula</a><a href="#s6">6 Vizinhos</a><a href="#s7">7 Armadilha</a><a href="#s8">8 Python</a><a href="#s9">9 Mapa</a>
+<a href="#s1">1 Regras</a><a href="#s2">2 Aprender</a><a href="#s3">3 Gabarito</a><a href="#s4">4 Rótulo ou número</a><a href="#s5">5 Modelo = fórmula</a><a href="#s6">6 Vizinhos</a><a href="#s7">7 Armadilha</a><a href="#s8">8 Python</a><a href="#s9">9 Mapa</a><a href="#s10">10 Referências</a>
 </div></nav>
 
 <header class="hero"><div class="wrap">
@@ -465,6 +473,44 @@ base64.b64encode(buf.getvalue()).decode()</script>
 <tr><td>Qual k?</td><td>girar o botão e medir</td><td>hiperparâmetro</td></tr></table>
 <p>Três perguntas ficaram abertas, e são o programa das próximas aulas:</p>
 <p>1. Escolhemos o melhor k olhando a nota do teste. Isso não é trapacear um pouquinho? → <em>validação cruzada</em><br>2. Como uma fórmula "aprende" quando há dezenas de medidas, não só a área? → <em>regressão linear e logística</em><br>3. Existe modelo que resume os exemplos em regras legíveis? → <em>árvores de decisão</em></p>
+</div></section>
+
+<section class="block" id="s10"><div class="wrap">
+<div class="eyebrow">Bloco 10</div>
+<h2>Para continuar</h2>
+<p>Tudo o que está aqui é gratuito e aberto. A ordem é a que eu recomendo para quem saiu desta aula querendo mais.</p>
+
+<h3 class="refgroup">Livros e cursos</h3>
+<ul class="refs">
+<li><a href="https://www.cs.cmu.edu/~tom/mlbook.html" target="_blank" rel="noopener">Tom Mitchell, <em>Machine Learning</em> (1997)</a>
+<span class="why">A definição que usamos no bloco 2 — tarefa, experiência e desempenho — é a primeira página deste livro. Envelheceu muito bem porque define o problema, não a moda do momento.</span></li>
+<li><a href="https://www.statlearning.com/" target="_blank" rel="noopener">An Introduction to Statistical Learning — James, Witten, Hastie e Tibshirani</a>
+<span class="why">O PDF é gratuito no site oficial. Leia o capítulo 2 (o que significa aprender, e por que treino e teste são diferentes) e o capítulo 3 (a reta do bloco 5, agora com todo o rigor).</span></li>
+<li><a href="https://developers.google.com/machine-learning/crash-course" target="_blank" rel="noopener">Google Machine Learning Crash Course</a>
+<span class="why">Curso gratuito, com exercícios que rodam no navegador. É o caminho mais curto entre esta aula e escrever o seu primeiro modelo sozinho.</span></li>
+</ul>
+
+<h3 class="refgroup">Documentação do scikit-learn</h3>
+<ul class="refs">
+<li><a href="https://scikit-learn.org/stable/modules/neighbors.html" target="_blank" rel="noopener">Nearest Neighbors</a>
+<span class="why">O bloco 6 inteiro, com as escolhas que não couberam na aula: como medir distância, dar mais peso aos vizinhos mais próximos e o que fazer quando a votação empata.</span></li>
+<li><a href="https://scikit-learn.org/stable/modules/cross_validation.html" target="_blank" rel="noopener">Cross-validation</a>
+<span class="why">A resposta da primeira pergunta que ficou aberta no bloco 9: como escolher o k sem trapacear espiando a nota do teste.</span></li>
+<li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html" target="_blank" rel="noopener">train_test_split</a>
+<span class="why">A função exata do bloco 7. Vale ler o que fazem os três parâmetros que importam: <code>test_size</code>, <code>random_state</code> e <code>stratify</code>.</span></li>
+<li><a href="https://scikit-learn.org/stable/modules/tree.html" target="_blank" rel="noopener">Decision Trees</a>
+<span class="why">A árvore desenhada no bloco 8, e a razão de ela ser o modelo mais fácil de mostrar para quem não é da área: dá para ler as regras em voz alta.</span></li>
+</ul>
+
+<h3 class="refgroup">As ferramentas desta página</h3>
+<ul class="refs">
+<li><a href="https://scikit-learn.org/" target="_blank" rel="noopener">scikit-learn</a>
+<span class="why">A biblioteca dos blocos 5 a 8. O que você aprendeu vale para todos os modelos dela: <code>fit</code>, <code>predict</code> e <code>score</code> nunca mudam de nome.</span></li>
+<li><a href="https://pyodide.org/en/stable/" target="_blank" rel="noopener">Pyodide</a>
+<span class="why">O que faz o Python rodar dentro do navegador nesta página, sem instalar nada e sem nenhum servidor executando código.</span></li>
+<li><a href="https://matplotlib.org/" target="_blank" rel="noopener">matplotlib</a>
+<span class="why">Quem desenhou as duas figuras do bloco 8. É a biblioteca de gráficos padrão de quem trabalha com dados em Python.</span></li>
+</ul>
 </div></section>
 
 <footer>Machine Learning do zero · aula 1 · o Python desta página roda no seu navegador via Pyodide.</footer>
