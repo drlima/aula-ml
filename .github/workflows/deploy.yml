@@ -23,6 +23,8 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
+      # marimo export html-wasm exige uv para resolver imports locais do notebook
+      - run: pip install uv
       - run: marimo export html-wasm aula.py -o site --mode edit
       - run: touch site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
