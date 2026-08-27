@@ -95,6 +95,9 @@ textarea{width:100%;min-height:220px;font-family:var(--mono);font-size:14px;line
   #svgLabels text{font-size:24px}
   #svgReg text{font-size:25px}
   #svgKnn text{font-size:26px}
+  /* a arvore e larga: rola na horizontal em vez de encolher ate ficar ilegivel */
+  #figTree{overflow-x:auto;justify-content:flex-start}
+  #figTree img{width:auto;max-width:none;height:320px}
   /* com a fonte maior os rotulos do eixo y passam da borda do viewBox */
   #svgReg{overflow:visible}
 }
@@ -112,6 +115,11 @@ code .k{color:var(--marker)}
 code .s{color:#8BE9B4}
 code .c{color:#92A0C6;font-style:italic}
 code .n{color:var(--coral)}
+/* figuras geradas pelo matplotlib dentro do Pyodide */
+.fig{margin:12px 0 10px;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;min-height:90px;display:flex;align-items:center;justify-content:center}
+.fig img{display:block;width:100%;height:auto}
+.fig.busy{opacity:.5}
+.figmsg{padding:20px 18px;font-family:var(--disp);font-weight:700;font-size:15px;line-height:1.4;color:var(--bad);text-align:center}
 footer{padding:40px 0 60px;color:var(--ink-2);font-size:15px;text-align:center}
 .tag{display:inline-block;font-family:var(--disp);font-weight:700;font-size:13px;padding:3px 10px;border-radius:999px;background:var(--paper-2);color:var(--ink-2);margin-right:6px}
 </style>
@@ -353,6 +361,90 @@ print("Nota nas flores escondidas:", round(modelo.score(X_teste, y_teste), 3))</
 <div class="ctrls" style="margin-top:12px"><button id="runBtn">Rodar Python</button><span id="pyStatus" style="font-weight:400;color:var(--ink-2)">Na primeira vez, o navegador baixa o Python (~20 MB). Leva alguns segundos.</span></div>
 <div class="console" id="pyOut"></div>
 </div>
+
+<h3 style="margin-top:34px">Dois exemplos visuais, desenhados aqui na hora</h3>
+<p>As duas figuras abaixo são geradas pelo <strong>matplotlib</strong> rodando no seu navegador, com o mesmo <code>fit</code> e <code>predict</code> dos blocos anteriores &mdash; só que agora sobre as 150 flores do Iris. Elas ficam atrás de um botão porque baixam mais alguns megabytes.</p>
+<div class="widget">
+<div class="ctrls"><button id="vizBtn">Carregar exemplos visuais</button><span id="vizNote" style="font-weight:400;color:var(--ink-2);font-family:var(--body);font-size:16px">Baixa o matplotlib, cerca de 10&nbsp;MB a mais.</span></div>
+
+<div id="vizWrap" hidden>
+  <h3 style="margin-top:22px">a) O mapa de decisão do bloco 6, agora no Iris</h3>
+  <p style="font-size:16px;color:var(--ink-2)">Mesma ideia do mapa que você pintou com o mouse: perguntar ao modelo a resposta de <em>cada</em> ponto do plano. Mova o k e veja as ilhas sumirem.</p>
+  <div class="ctrls"><label>k (quantos vizinhos consultar) <input type="range" id="slKviz" min="1" max="25" step="2" value="5"> <span class="val" id="vKviz">5</span></label></div>
+  <div class="fig" id="figKnn"><img id="imgKnn" alt="Fronteira de decisão do k-NN sobre as pétalas do Iris"></div>
+  <details class="code"><summary>O código que desenhou esta figura</summary><div class="in">
+  <p class="tie">É o mesmo <code>fit</code> do bloco 6. O que mudou foi só perguntar a resposta de milhares de pontos de uma vez para poder pintar o fundo.</p>
+  <pre><code class="py" id="codeKnn">import matplotlib
+matplotlib.use("Agg")          # desenha na memória, não numa janela
+import io, base64
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
+from sklearn.datasets import load_iris
+from sklearn.neighbors import KNeighborsClassifier
+
+iris = load_iris()
+X = iris.data[:, 2:4]          # só 2 medidas: comprimento e largura da pétala
+y = iris.target                # 0 setosa, 1 versicolor, 2 virginica
+
+modelo = KNeighborsClassifier(n_neighbors=k)   # o k vem do slider acima
+modelo.fit(X, y)                               # o mesmo fit do bloco 6
+
+# pergunta ao modelo a resposta de CADA ponto do plano: isso é o mapa
+gx, gy = np.meshgrid(np.arange(0.5, 7.6, 0.02), np.arange(-0.2, 3.0, 0.02))
+Z = modelo.predict(np.c_[gx.ravel(), gy.ravel()]).reshape(gx.shape)
+
+cores = ["#FF6B57", "#1BA39C", "#7B61FF"]
+plt.rcParams.update({"font.size": 12})
+fig, ax = plt.subplots(figsize=(6.4, 4.3))
+ax.pcolormesh(gx, gy, Z, cmap=ListedColormap(cores), alpha=0.18, shading="auto")
+for i, nome in enumerate(iris.target_names):
+    ax.scatter(X[y == i, 0], X[y == i, 1], c=cores[i], s=38,
+               edgecolor="white", linewidth=0.8, label=nome)
+ax.set_xlabel("comprimento da pétala (cm)")
+ax.set_ylabel("largura da pétala (cm)")
+ax.legend(loc="upper left", frameon=False)
+
+buf = io.BytesIO()                                  # um arquivo que só existe na memória
+fig.savefig(buf, format="png", dpi=140, bbox_inches="tight")
+base64.b64encode(buf.getvalue()).decode()           # devolve a figura como texto</code></pre>
+  </div></details>
+
+  <h3 style="margin-top:26px">b) Uma árvore de decisão</h3>
+  <p style="font-size:16px;color:var(--ink-2)">Este é o modelo que <strong>resume os exemplos em regras legíveis</strong> &mdash; a terceira pergunta que ficou aberta no bloco 9. Leia de cima para baixo: cada caixa é uma pergunta sobre uma medida.</p>
+  <div class="fig" id="figTree"><img id="imgTree" alt="Árvore de decisão treinada no Iris"></div>
+</div>
+</div>
+<script type="text/plain" id="codeTree">import matplotlib
+matplotlib.use("Agg")
+import io, base64
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+
+iris = load_iris()
+nomes = ["comprimento da sépala (cm)", "largura da sépala (cm)",
+         "comprimento da pétala (cm)", "largura da pétala (cm)"]
+
+arvore = DecisionTreeClassifier(max_depth=3, random_state=0)
+arvore.fit(iris.data, iris.target)
+
+fig, ax = plt.subplots(figsize=(11.5, 6.2))
+plot_tree(arvore, feature_names=nomes, class_names=list(iris.target_names),
+          filled=True, rounded=True, impurity=False, fontsize=9, ax=ax)
+
+# o plot_tree escreve os rótulos em inglês; traduzimos o texto de cada caixa
+for texto in ax.texts:
+    t = texto.get_text()
+    for de, para in [("samples", "exemplos"), ("value", "contagem"),
+                     ("class", "resposta"), ("True", "sim"), ("False", "não")]:
+        t = t.replace(de, para)
+    texto.set_text(t)
+
+buf = io.BytesIO()
+fig.savefig(buf, format="png", dpi=120, bbox_inches="tight")
+base64.b64encode(buf.getvalue()).decode()</script>
+
 <details class="reveal"><summary>Revelar</summary><div class="in">
 <p>Troque <code>n_neighbors=1</code> por 7 e rode de novo. Troque <code>load_iris</code> por <code>load_wine</code> (vinhos, 13 análises químicas) ou <code>load_breast_cancer</code> (exames, benigno/maligno). O código não muda; só a tabela muda. Essa é a promessa do scikit-learn e o motivo de ML ser útil em tantas áreas.</p>
 <p><strong>Desafio para casa:</strong> troque <code>KNeighborsClassifier</code> por <code>DecisionTreeClassifier</code> (<code>from sklearn.tree import DecisionTreeClassifier</code>). Repare que <code>fit</code>, <code>predict</code> e <code>score</code> continuam iguais.</p>
@@ -496,12 +588,36 @@ $$("pre code.py").forEach(c=>{c.innerHTML=highlight(c.textContent)});
 // 8: pyodide
 let pyReady=null;
 async function getPy(){if(pyReady)return pyReady;pyReady=(async()=>{$("#pyStatus").textContent="Baixando o Python…";
-  await new Promise((res,rej)=>{const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/pyodide/v0.27.5/full/pyodide.js";s.onload=res;s.onerror=rej;document.head.appendChild(s)});
-  const py=await loadPyodide({indexURL:"https://cdn.jsdelivr.net/pyodide/v0.27.5/full/"});$("#pyStatus").textContent="Baixando o scikit-learn…";await py.loadPackage(["scikit-learn"]);$("#pyStatus").textContent="Pronto. Rode quantas vezes quiser.";return py})();return pyReady}
+  await new Promise((res,rej)=>{const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/pyodide/v0.27.5/full/pyodide.js";s.onload=res;s.onerror=()=>rej(new Error("Não foi possível baixar o Python. Confira a conexão e tente de novo."));document.head.appendChild(s)});
+  const py=await loadPyodide({indexURL:"https://cdn.jsdelivr.net/pyodide/v0.27.5/full/"});$("#pyStatus").textContent="Baixando o scikit-learn…";await py.loadPackage(["scikit-learn"]);$("#pyStatus").textContent="Pronto. Rode quantas vezes quiser.";return py})();
+  pyReady.catch(()=>{pyReady=null});return pyReady}
 $("#runBtn").onclick=async()=>{const btn=$("#runBtn"),out=$("#pyOut");btn.disabled=true;out.textContent="";
   try{const py=await getPy();py.setStdout({batched:s=>out.textContent+=s+"\n"});py.setStderr({batched:s=>out.textContent+=s+"\n"});await py.runPythonAsync($("#py").value)}
   catch(e){out.textContent+=String(e).split("\n").slice(-3).join("\n");$("#pyStatus").textContent="Deu erro no código (veja abaixo). Corrija e rode de novo."}
   btn.disabled=false};
+
+// 8b: exemplos visuais com matplotlib (so baixa quando o aluno pede)
+let vizReady=null;
+function getViz(){if(vizReady)return vizReady;
+  vizReady=(async()=>{const py=await getPy();$("#pyStatus").textContent="Baixando o matplotlib…";
+    await py.loadPackage(["matplotlib"]);$("#pyStatus").textContent="Pronto. Mova o k para redesenhar.";return py})();
+  vizReady.catch(()=>{vizReady=null});return vizReady}
+const figFail=(boxId,msg)=>{$("#"+boxId).classList.remove("busy");$("#"+boxId).innerHTML=`<div class="figmsg">${msg}</div>`};
+async function drawFig(boxId,imgId,code,globals){const box=$("#"+boxId);box.classList.add("busy");
+  try{const py=await getViz();for(const g in globals)py.globals.set(g,globals[g]);
+    const b64=await py.runPythonAsync(code);
+    let img=$("#"+imgId);if(!img){box.innerHTML=`<img id="${imgId}">`;img=$("#"+imgId)}
+    img.src="data:image/png;base64,"+b64;box.classList.remove("busy");return true}
+  catch(e){console.warn(e);
+    figFail(boxId,"Não foi possível desenhar a figura. Ela precisa baixar o matplotlib da internet — confira a conexão e toque de novo em <em>Carregar exemplos visuais</em>.");
+    $("#pyStatus").textContent="Falhou ao baixar. Tente de novo.";$("#vizBtn").disabled=false;return false}}
+const drawKnnFig=()=>drawFig("figKnn","imgKnn",$("#codeKnn").textContent,{k:+$("#slKviz").value});
+const drawTreeFig=()=>drawFig("figTree","imgTree",$("#codeTree").textContent,{});
+$("#vizBtn").onclick=async()=>{$("#vizBtn").disabled=true;$("#vizWrap").hidden=false;$("#vizNote").textContent="Baixando…";
+  const ok=await drawKnnFig();if(ok)await drawTreeFig();
+  if(ok)$("#vizNote").textContent="Prontas. Mova o k para redesenhar a primeira."};
+let kTimer=null;
+$("#slKviz").oninput=e=>{$("#vKviz").textContent=e.target.value;clearTimeout(kTimer);kTimer=setTimeout(drawKnnFig,260)};
 </script>
 </body>
 </html>
