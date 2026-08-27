@@ -180,12 +180,13 @@ print(modelo.intercept_)       # o "b" do slider: o ponto de partida</code></pre
 <div class="legend"><span><i class="dot" style="background:var(--coral)"></i>laranja</span><span><i class="dot" style="background:var(--teal)"></i>maçã</span><span><i class="dot" style="background:#fff;border:2px solid var(--ink)"></i>fruta nova</span></div>
 <div class="out" id="knnOut">Toque no gráfico.</div>
 </div>
-<h3 style="margin-top:30px">Como o k-NN decide, em três passos</h3>
-<p style="font-size:16px;color:var(--ink-2)">O gráfico acima tem 60 frutas: ótimo para brincar, ruim para enxergar o mecanismo. Aqui embaixo são só oito. Troque o k e repare que <strong>a resposta pode mudar com os mesmos dados</strong>.</p>
+<h3 style="margin-top:30px">Três modelos, os mesmos dez pontos</h3>
+<p style="font-size:16px;color:var(--ink-2)">O gráfico acima tem 60 frutas: ótimo para brincar, ruim para enxergar o mecanismo. Aqui embaixo são só dez, e você pode ver <strong>três modelos diferentes decidindo o mesmo caso</strong>, passo a passo. Repare que eles nem sempre concordam &mdash; e que o k também muda a resposta.</p>
 <div class="widget">
 <div class="ctrls">
 <button id="stepBtn">Ver o passo a passo</button>
-<label>k <span class="seg" id="stepK" role="group" aria-label="k"><button class="ghost small" aria-pressed="false">1</button><button class="ghost small" aria-pressed="true">3</button><button class="ghost small" aria-pressed="false">5</button></span></label>
+<label>modelo <span class="seg" id="stepModel" role="group" aria-label="modelo"><button class="ghost small" aria-pressed="true">vizinhos</button><button class="ghost small" aria-pressed="false">reta</button><button class="ghost small" aria-pressed="false">árvore</button></span></label>
+<label id="stepKWrap">k <span class="seg" id="stepK" role="group" aria-label="k"><button class="ghost small" aria-pressed="false">1</button><button class="ghost small" aria-pressed="true">3</button><button class="ghost small" aria-pressed="false">5</button></span></label>
 </div>
 <svg id="svgSteps" viewBox="0 0 700 340" width="100%" aria-label="Como o k-NN decide, passo a passo"></svg>
 <div class="out" id="stepOut"></div>
@@ -493,10 +494,23 @@ window.STR = {
   regFormula: "preço = {a} × área {sign} {b}",
 
   // bloco 6 — votação dos vizinhos
-  step0: "Chegou uma fruta nova. Só sabemos onde ela cai no gráfico.",
-  step1: "Passo 1: medir a distância dela até cada fruta conhecida.",
-  step2: "Passo 2: ficar só com as k mais próximas e descartar o resto.",
-  step3: "Passo 3: a etiqueta mais comum entre elas vence.",
+  featWeight: "peso",
+  featSweet: "doçura",
+  knn0: "Chegou uma fruta nova. Só sabemos onde ela cai no gráfico.",
+  knn1: "Passo 1: medir a distância dela até cada fruta conhecida.",
+  knn2: "Passo 2: ficar só com as k mais próximas e descartar o resto.",
+  knn3: "Passo 3: a etiqueta mais comum entre elas vence.",
+  lin0: "Chegou uma fruta nova. Agora sem olhar vizinho nenhum.",
+  lin1: "Passo 1: procurar a reta que melhor separa as duas cores — é a mesma conta do bloco 5, só que a resposta a imitar é 0 ou 1.",
+  lin2: "Passo 2: a reta vira uma fronteira. De um lado o modelo responde uma coisa, do outro, outra.",
+  lin3: "Passo 3: ver de que lado a fruta nova caiu.",
+  linResult: "O valor previsto foi {v}: acima de 0,5 é {apple}, abaixo é {orange} → o modelo diz {winner}.",
+  tree0: "Chegou uma fruta nova. Agora o modelo vai fazer perguntas.",
+  tree1: "Passo 1: a pergunta que melhor separa as cores corta o gráfico em dois.",
+  tree2: "Passo 2: dentro do pedaço onde a fruta caiu, uma segunda pergunta.",
+  tree3: "Passo 3: a caixa onde ela parou já tem uma resposta pronta.",
+  treeQ: "{feat} ≤ {t}?",
+  treeResult: "Nessa caixa há {apples} × {oranges} → o modelo diz {winner}.",
   rank: ["1ª", "2ª", "3ª", "4ª", "5ª"],
   voteOne: "Votação com o vizinho mais próximo",
   voteMany: "Votação entre os {k} vizinhos",
