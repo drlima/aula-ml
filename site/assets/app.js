@@ -263,7 +263,8 @@ function drawSplit(){const hide=+$("#slHide").value/100,k=+$("#slK2").value;$("#
     el("text",{x:x+40,y:base-h-10,"font-size":20,"text-anchor":"middle",fill:c},s2).textContent=v==null?"—":Math.round(v*100)+"%";
     el("text",{x:x+40,y:base+20,"font-size":12,"text-anchor":"middle",fill:"#4A5472"},s2).textContent=n});
   el("line",{x1:40,y1:250,x2:300,y2:250,stroke:C.line,"stroke-width":2},s2);el("text",{x:170,y:22,"font-size":14,"text-anchor":"middle"},s2).textContent=S.scoreTitle;
-  if(aTe==null)el("text",{x:170,y:140,"font-size":12,"text-anchor":"middle",fill:"#4A5472"},s2).textContent=S.scoreHint}
+  // a dica so aparece quando nao ha barra de teste, e fica abaixo do eixo das barras
+  if(aTe==null)el("text",{x:170,y:292,"font-size":11,"text-anchor":"middle",fill:"#4A5472"},s2).textContent=S.scoreHint}
 $("#slHide").oninput=drawSplit;$("#slK2").oninput=drawSplit;drawSplit();
 
 // realce de sintaxe minimo para os paineis de codigo (sem dependencia externa)

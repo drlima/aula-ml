@@ -249,7 +249,7 @@ print(model.score(X_test, y_test))   # purple bar: on the hidden fruit</code></p
 
 <section class="block" id="s8"><div class="wrap">
 <div class="eyebrow">Block 8</div>
-<h2>All of it in 4 lines of Python</h2>
+<h2>All of it in a few lines of Python</h2>
 <p>You have just done with a mouse what the <strong>scikit-learn</strong> library does for you. The vocabulary is the same: <code>X</code> is the table of measurements, <code>y</code> are the labels, <code>fit</code> learns, <code>predict</code> guesses, <code>score</code> grades. The Python below runs <strong>inside your browser</strong>; edit it freely.</p>
 <div class="widget">
 <textarea id="py" spellcheck="false">from sklearn.datasets import load_iris          # 150 flowers, 4 measurements, 3 species
@@ -270,7 +270,7 @@ print("Score on the hidden flowers:", round(model.score(X_test, y_test), 3))</te
 
 <h3 style="margin-top:34px">Two visual examples, drawn right here</h3>
 <p>The two figures below are drawn by <strong>matplotlib</strong> running in your browser, with the same <code>fit</code> and <code>predict</code> from the earlier blocks &mdash; only now over the 150 Iris flowers. They sit behind a button because they download a few more megabytes.</p>
-<div class="widget">
+<div class="widget wide">
 <div class="ctrls"><button id="vizBtn">Load visual examples</button><span id="vizNote" style="font-weight:400;color:var(--ink-2);font-family:var(--body);font-size:16px">Downloads matplotlib, about 10&nbsp;MB more.</span></div>
 
 <div id="vizWrap" hidden>
@@ -318,10 +318,10 @@ base64.b64encode(buf.getvalue()).decode()           # hand the figure back as te
 
   <h3 style="margin-top:26px">b) A decision tree</h3>
   <p style="font-size:16px;color:var(--ink-2)">This is the model that <strong>boils the examples down to readable rules</strong> &mdash; the third question left open in block 9. Read it top to bottom: every box is one question about one measurement, and its color tells you which answer wins inside it. Turn the depth up and watch the model trade one coarse rule for several fine ones.</p>
-  <div class="ctrls"><label>depth (how many questions in a row) <input type="range" id="slDepth" min="1" max="4" step="1" value="3"> <span class="val" id="vDepth">3</span></label></div>
+  <div class="ctrls"><label>depth (how many questions in a row) <input type="range" id="slDepth" min="1" max="3" step="1" value="2"> <span class="val" id="vDepth">2</span></label></div>
   <div class="fig" id="figTree"><img id="imgTree" alt="Decision tree trained on Iris"></div>
   <details class="code"><summary>The code that drew this figure</summary><div class="in">
-  <p class="tie">It is the same <code>fit</code> as always &mdash; we only swapped <code>KNeighborsClassifier</code> for <code>DecisionTreeClassifier</code>. It is literally the homework sitting in the Reveal below.</p>
+  <p class="tie">It is the same <code>fit</code> as always &mdash; we only swapped <code>KNeighborsClassifier</code> for <code>DecisionTreeClassifier</code>. <code>max_depth</code> is the knob you just turned.</p>
   <pre><code class="py" id="codeTree">import matplotlib
 matplotlib.use("Agg")
 import io, base64
@@ -340,7 +340,7 @@ tree.fit(iris.data, iris.target)            # the same fit as the earlier blocks
 fig, ax = plt.subplots(figsize=(min(4 + 2.6 * d, 13), 2.2 + 1.35 * d))
 drawn = plot_tree(tree, feature_names=names, class_names=list(iris.target_names),
                   filled=True, rounded=True, impurity=False,
-                  fontsize=max(7, 12 - d), ax=ax)
+                  fontsize=max(10, 13 - d), ax=ax)
 # plot_tree also hands back the "True"/"False" arrow labels, which are not boxes
 boxes = [c for c in drawn if c.get_bbox_patch() is not None]
 
@@ -361,7 +361,7 @@ base64.b64encode(buf.getvalue()).decode()</code></pre>
 
 <h3 style="margin-top:34px">The same idea, seen from above</h3>
 <p>Every box in the tree is a question, and every question is a cut in the chart. Here is the fruit from block 6 again, with the two cuts a depth-2 tree would pick. This drawing uses no Python: it runs straight in the browser.</p>
-<div class="widget">
+<div class="widget wide">
 <div class="ctrls"><button id="cutsBtn">Show the cuts</button></div>
 <svg id="svgCuts" viewBox="0 0 700 340" width="100%" aria-label="The cuts a decision tree makes on the fruit"></svg>
 <div class="out" id="cutsOut"></div>
@@ -369,7 +369,7 @@ base64.b64encode(buf.getvalue()).decode()</code></pre>
 
 <details class="reveal"><summary>Reveal</summary><div class="in">
 <p>Change <code>n_neighbors=1</code> to 7 and run it again. Swap <code>load_iris</code> for <code>load_wine</code> (wines, 13 chemical measurements) or <code>load_breast_cancer</code> (test results, benign/malignant). The code does not change; only the table changes. That is the promise of scikit-learn, and the reason ML is useful in so many fields.</p>
-<p><strong>Homework:</strong> swap <code>KNeighborsClassifier</code> for <code>DecisionTreeClassifier</code> (<code>from sklearn.tree import DecisionTreeClassifier</code>). Notice that <code>fit</code>, <code>predict</code> and <code>score</code> keep their names.</p>
+<p><strong>Homework:</strong> in the tree just above, change <code>max_depth</code> to 1 and then to 6, and watch what happens to the test score. A tree that is too shallow cannot separate; one that is too deep memorizes. It is block 7 all over again, with a different model.</p>
 </div></details>
 </div></section>
 
