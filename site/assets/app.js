@@ -119,7 +119,7 @@ function drawKnn(){const svg=$("#svgKnn"),{W,H,pad}=K6,k=+$("#slK").value;svg.in
       oranges:`<span style="color:${C.coral}">${r.v0} ${r.v0===1?S.orange:S.orangePl}</span>`,
       winner:`<strong>${r.c?S.apple:S.orange}</strong>`})}
   fruits.forEach(f=>el("circle",{cx:sx(f.x,W,pad),cy:sy(f.y,H,pad),r:7,fill:fcol(f),stroke:"#fff","stroke-width":1.5},svg));
-  if(novo){el("circle",{cx:sx(novo.x,W,pad),cy:sy(novo.y,H,pad),r:11,fill:"#fff",stroke:C.ink,"stroke-width":3},svg);el("text",{x:sx(novo.x,W,pad),y:sy(novo.y,H,pad)-16,"font-size":13,"text-anchor":"middle"},svg).textContent="?"}}
+  if(novo){el("circle",{cx:sx(novo.x,W,pad),cy:sy(novo.y,H,pad),r:11,fill:"#fff",stroke:C.ink,"stroke-width":3},svg);el("text",{x:sx(novo.x,W,pad),y:sy(novo.y,H,pad)+5,"font-size":14,"text-anchor":"middle",fill:C.ink},svg).textContent="?"}}
 $("#svgKnn").addEventListener("click",e=>{const svg=e.currentTarget,r=svg.getBoundingClientRect(),px=(e.clientX-r.left)/r.width*K6.W,py=(e.clientY-r.top)/r.height*K6.H;
   novo={x:P.x0+(px-K6.pad)/(K6.W-2*K6.pad)*(P.x1-P.x0),y:P.y0+(K6.H-K6.pad-py)/(K6.H-2*K6.pad)*(P.y1-P.y0)};drawKnn();drawSteps(1)});
 $("#slK").oninput=drawKnn;$("#mapToggle").onchange=drawKnn;
@@ -131,7 +131,14 @@ const DEMO=[{x:120,y:0.70,c:1},{x:135,y:0.62,c:1},{x:150,y:0.74,c:1},{x:160,y:0.
             {x:205,y:0.42,c:0},{x:220,y:0.35,c:0},{x:195,y:0.30,c:0},{x:235,y:0.48,c:0},{x:215,y:0.72,c:1}];
 const DNEW={x:192,y:0.55};
 const DG={W:700,H:340,pad:52};
-const SX=f=>sx(f.x,DG.W,DG.pad), SY=f=>sy(f.y,DG.H,DG.pad);
+// cada desenho recebe a sua propria escala; P continua servindo para a escala global
+const mapper=B=>({X:f=>DG.pad+(f.x-B.x0)/(B.x1-B.x0)*(DG.W-2*DG.pad),
+                  Y:f=>DG.H-DG.pad-(f.y-B.y0)/(B.y1-B.y0)*(DG.H-2*DG.pad)});
+// caixa envolvente dos pontos mostrados, com 15% de folga: a demonstracao ocupa o grafico inteiro
+const bounds=(pts,ref)=>{const xs=[...pts.map(f=>f.x),ref.x],ys=[...pts.map(f=>f.y),ref.y];
+  const x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);
+  const mx=(x1-x0)*0.15||1,my=(y1-y0)*0.15||0.05;
+  return {x0:x0-mx,x1:x1+mx,y0:y0-my,y1:y1+my}};
 const maioria=g=>g.filter(f=>f.c===1).length*2>g.length?1:0;
 const dist=(a,b)=>Math.hypot((a.x-b.x)/(P.x1-P.x0),(a.y-b.y)/(P.y1-P.y0));
 // se o aluno ja colocou uma fruta no playground, a camera lenta mostra o caso dele:
@@ -139,15 +146,16 @@ const dist=(a,b)=>Math.hypot((a.x-b.x)/(P.x1-P.x0),(a.y-b.y)/(P.y1-P.y0));
 const slowData=()=>novo
   ? {pts:fruits.map(f=>({f,d:dist(f,novo)})).sort((a,b)=>a.d-b.d).slice(0,10).map(o=>o.f).sort((a,b)=>a.x-b.x),ref:novo}
   : {pts:DEMO,ref:DNEW};
-const drawPts=(svg,pts,fade)=>pts.forEach((f,i)=>el("circle",{cx:SX(f),cy:SY(f),r:8,fill:fcol(f),
+const drawPts=(svg,pts,M,fade)=>pts.forEach((f,i)=>el("circle",{cx:M.X(f),cy:M.Y(f),r:8,fill:fcol(f),
   stroke:"#fff","stroke-width":2,opacity:fade&&fade(f,i)?.25:1},svg));
-const drawNew=(svg,p)=>{el("circle",{cx:SX(p),cy:SY(p),r:12,fill:"#fff",stroke:C.ink,"stroke-width":3},svg);
-  el("text",{x:SX(p),y:SY(p)+5,"font-size":14,"text-anchor":"middle",fill:C.ink},svg).textContent="?"};
+const drawNew=(svg,p,M)=>{el("circle",{cx:M.X(p),cy:M.Y(p),r:12,fill:"#fff",stroke:C.ink,"stroke-width":3},svg);
+  el("text",{x:M.X(p),y:M.Y(p)+5,"font-size":14,"text-anchor":"middle",fill:C.ink},svg).textContent="?"};
 const winnerTag=c=>`<strong>${c?S.apple:S.orange}</strong>`;
 
-let stepK=3, stepAnim=null;
+let stepK=+$("#slK").value, stepAnim=null;   // abre com o mesmo k do playground
 function drawSteps(pr){const svg=$("#svgSteps"),{pts,ref}=slowData(),PH=[0.10,0.58,0.76];
   svg.innerHTML="";
+  const M=mapper(bounds(pts,ref));
   const rank=pts.map((f,i)=>({f,i,d:dist(f,ref)})).sort((u,v)=>u.d-v.d);
   const phase=pr<PH[0]?0:pr<PH[1]?1:pr<PH[2]?2:3;
   const nMeas=phase===0?0:phase>1?pts.length:Math.ceil((pr-PH[0])/(PH[1]-PH[0])*pts.length);
@@ -155,12 +163,12 @@ function drawSteps(pr){const svg=$("#svgSteps"),{pts,ref}=slowData(),PH=[0.10,0.
   axes(svg,DG.W,DG.H,DG.pad,S.axWeight,S.axSweet);
   pts.forEach((f,i)=>{if(phase===0)return;if(phase===1&&i>=nMeas)return;
     const keep=sel.has(i);if(phase===3&&!keep)return;
-    el("line",{x1:SX(ref),y1:SY(ref),x2:SX(f),y2:SY(f),
+    el("line",{x1:M.X(ref),y1:M.Y(ref),x2:M.X(f),y2:M.Y(f),
       stroke:phase>=2&&keep?fcol(f):C.ink,"stroke-width":phase>=2&&keep?3.5:1.5,
       "stroke-dasharray":phase>=2&&keep?"":"4 3",opacity:phase>=2?(keep?.95:.12):.55},svg)});
-  drawPts(svg,pts,(f,i)=>phase>=2&&!sel.has(i));
-  if(phase>=2)near.forEach((o,r)=>el("text",{x:SX(o.f),y:SY(o.f)-19,"font-size":13,"text-anchor":"middle",fill:C.ink},svg).textContent=S.rank[r]);
-  drawNew(svg,ref);
+  drawPts(svg,pts,M,(f,i)=>phase>=2&&!sel.has(i));
+  if(phase>=2)near.forEach((o,r)=>el("text",{x:M.X(o.f),y:M.Y(o.f)-19,"font-size":13,"text-anchor":"middle",fill:C.ink},svg).textContent=S.rank[r]);
+  drawNew(svg,ref,M);
   const v1=near.filter(o=>o.f.c===1).length,v0=stepK-v1;
   const cap=[S.knn0,S.knn1,S.knn2,S.knn3][phase];
   $("#stepOut").innerHTML=phase<3?cap:cap+" "+T(S.voteResult,{
@@ -173,9 +181,13 @@ $("#stepBtn").onclick=()=>{stopSteps();const DUR=5200,t0=performance.now();
   const f=now=>{const pr=Math.min((now-t0)/DUR,1);drawSteps(pr);
     stepAnim=pr<1?requestAnimationFrame(f):null};
   stepAnim=requestAnimationFrame(f)};
-$$("#stepK button").forEach((b,i)=>b.onclick=()=>{stepK=[1,3,5][i];
-  $$("#stepK button").forEach((x,j)=>x.setAttribute("aria-pressed",i===j));
-  stopSteps();drawSteps(1)});
+// os valores possiveis sao 1, 3, 5 e o k do playground, se for outro
+function buildStepK(){const vals=[...new Set([1,3,5,stepK])].sort((a,b)=>a-b);
+  $("#stepK").innerHTML=vals.map(v=>`<button class="ghost small" aria-pressed="${v===stepK}">${v}</button>`).join("");
+  $$("#stepK button").forEach((b,i)=>b.onclick=()=>{stepK=vals[i];
+    $$("#stepK button").forEach((x,j)=>x.setAttribute("aria-pressed",i===j));
+    stopSteps();drawSteps(1)})}
+buildStepK();
 drawSteps(1);
 
 // 8b: a mesma arvore vista de cima. Nao depende do Pyodide: e desenhada aqui.
@@ -221,8 +233,9 @@ function drawCuts(pr){const svg=$("#svgCuts"),PH=[0.10,0.42,0.70];svg.innerHTML=
   if(phase>=1)corte(T1,null,C.ink);
   if(phase>=2&&T2){const faixa=DNEW[T1.k]<=T1.t?[P.x0,T1.t]:[T1.t,P.x1];
     corte(T2,T1.k==="x"?faixa:[P.y0,P.y1],"#7B61FF")}
-  drawPts(svg,DEMO,f=>phase>=2&&!T1side.includes(f));
-  drawNew(svg,DNEW);
+  const MP=mapper(P);                       // os cortes so fazem sentido na escala global
+  drawPts(svg,DEMO,MP,f=>phase>=2&&!T1side.includes(f));
+  drawNew(svg,DNEW,MP);
   const v1=T2side.filter(f=>f.c===1).length,v0=T2side.length-v1;
   const cap=[S.tree0,S.tree1,S.tree2,S.tree3][phase];
   $("#cutsOut").innerHTML=phase<3?cap:cap+" "+T(S.treeResult,{
