@@ -384,9 +384,13 @@ base64.b64encode(buf.getvalue()).decode()</code></pre>
 <tr><td>What is a model?</td><td>a formula with blanks</td><td>parameters, loss, training</td></tr>
 <tr><td>How do you guess with no formula?</td><td>look at the neighbors</td><td>k-NN</td></tr>
 <tr><td>Is 100% trustworthy?</td><td>hide part of the data</td><td>generalization, overfitting, train/test</td></tr>
-<tr><td>Which k?</td><td>turn the knob and measure</td><td>hyperparameter</td></tr></table>
+<tr><td>Which k?</td><td>turn the knob and measure</td><td>hyperparameter</td></tr>
+<tr><td>Can a model be read out loud?</td><td>questions in a row</td><td>decision tree</td></tr></table>
 <p>Three questions stayed open, and they are the syllabus for the next classes:</p>
-<p>1. We picked the best k by looking at the test score. Isn't that cheating, just a little? → <em>cross-validation</em><br>2. How does a formula "learn" when there are dozens of measurements, not just floor area? → <em>linear and logistic regression</em><br>3. Is there a model that boils the examples down to readable rules? → <em>decision trees</em></p>
+<p>1. We picked the best k by looking at the test score. Isn't that cheating, just a little? → <em>cross-validation</em><br>2. How does a formula "learn" when there are dozens of measurements, not just floor area? → <em>linear and logistic regression</em><br>3. How does the tree decide which question to ask first? → <em>impurity and information gain</em></p>
+<h3 style="margin-top:34px">Test yourself</h3>
+<p>Seven questions about everything that came before. Answer them before you close the tab.</p>
+<div class="widget"><div class="quiz" id="quiz9"></div><div class="out" id="quiz9Out"></div></div>
 </div></section>
 
 <section class="block" id="s10"><div class="wrap">
@@ -465,6 +469,26 @@ window.STR = {
 
   // block 4 — price and quiz
   priceLabel: "${v}k",
+  quiz9Score: "{right} out of {total}. ",
+  quiz9Perfect: "You understood the whole class.",
+  quiz9Good: "Good. Go back over the blocks behind the ones you missed.",
+  quiz9Weak: "Worth reopening the Reveals in blocks 5 and 7 — they hold up everything else.",
+  quiz9: [
+    ["Why doesn't writing rules by hand solve spam?",
+     ["There is always a case the rule did not foresee", "Computers cannot read text", "The rules become too slow"], 0],
+    ["When does a system actually learn?",
+     ["When someone programs many rules into it", "When its performance at the task improves with experience", "When it has internet access"], 1],
+    ["What are unlabeled data good for?",
+     ["Nothing, without an answer key you can do nothing", "Predicting the right answer for new cases", "Finding hidden groups and patterns"], 2],
+    ["\"Predict how many days a patient will stay in hospital\" is a problem of…",
+     ["Regression", "Classification", "Unsupervised learning"], 0],
+    ["In price = a × area + b, what does training adjust?",
+     ["The floor area of the apartments", "The numbers a and b", "The number of examples"], 1],
+    ["A model scores 100% on training and 70% on test. What is going on?",
+     ["It is ready to ship", "It is memorizing, not generalizing", "The table is missing measurements"], 1],
+    ["What is the point of splitting train and test?",
+     ["To train twice and improve the fit", "To make training faster", "To measure whether the model gets right the cases it has not seen"], 2]
+  ],
   quizC: "classification",
   quizR: "regression",
   quizAnswer: "  → it's {a}",

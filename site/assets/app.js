@@ -73,6 +73,23 @@ QZ.forEach(([t,a])=>{const row=document.createElement("div");row.className="row"
     if(qdone===QZ.length){const o=$("#quizOut");o.className="out "+(qright===QZ.length?"ok":"");o.textContent=T(S.quizScore,{right:qright,total:QZ.length})+(qright===QZ.length?S.quizPerfect:S.quizHint)}};
   b1.onclick=()=>pick("C");b2.onclick=()=>pick("R");$("#quiz").appendChild(row)});
 
+// 9: quiz de autoavaliacao (mesmo padrao .quiz do bloco 4, com N opcoes por pergunta)
+let q9done=0,q9right=0;
+S.quiz9.forEach(([pergunta,opcoes,certa])=>{
+  const row=document.createElement("div");row.className="row multi";
+  row.innerHTML=`<span>${pergunta}</span><div class="opts">${opcoes.map(o=>`<button class="ghost small">${o}</button>`).join("")}</div>`;
+  const bts=[...row.querySelectorAll("button")];
+  bts.forEach((b,i)=>b.onclick=()=>{if(row.dataset.done)return;row.dataset.done=1;q9done++;
+    const ok=i===certa;if(ok)q9right++;
+    row.classList.add(ok?"right":"wrong");bts.forEach(x=>x.disabled=true);
+    if(!ok)bts[certa].disabled=false,bts[certa].style.borderColor="var(--ok)",bts[certa].style.color="var(--ok)";
+    if(q9done===S.quiz9.length){const o=$("#quiz9Out");
+      const pct=q9right/S.quiz9.length;
+      o.className="out "+(pct===1?"ok":pct<0.5?"bad":"");
+      o.textContent=T(S.quiz9Score,{right:q9right,total:S.quiz9.length})+
+        (pct===1?S.quiz9Perfect:pct<0.5?S.quiz9Weak:S.quiz9Good)}});
+  $("#quiz9").appendChild(row)});
+
 // 5: regression
 const apts=[[45,310],[48,340],[52,360],[56,385],[60,395],[64,455],[68,440],[72,425],[75,455],[78,540],[80,520],[88,505],
   [95,560],[100,640],[105,590],[110,640],[115,720],[120,700],[128,700],[135,760],[142,795],[150,830],[160,880],[170,930]]

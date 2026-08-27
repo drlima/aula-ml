@@ -79,6 +79,9 @@ details.reveal .in p:last-child{margin:0}
 .quiz .row{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:#fff}
 .quiz .row.right{border-color:var(--ok);background:#EAF8F0}.quiz .row.wrong{border-color:var(--bad);background:#FDEDED}
 .quiz .row span{font-family:var(--disp);font-weight:700;font-size:16px}
+.quiz .row.multi{grid-template-columns:1fr;gap:10px}
+.quiz .opts{display:flex;flex-wrap:wrap;gap:8px}
+.quiz .opts button{text-align:left}
 .seg{display:inline-flex;gap:6px;flex-wrap:wrap}
 .seg button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
 .answer{transition:opacity .15s}

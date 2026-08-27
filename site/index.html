@@ -392,9 +392,13 @@ base64.b64encode(buf.getvalue()).decode()</code></pre>
 <tr><td>O que é um modelo?</td><td>fórmula com números em branco</td><td>parâmetros, erro, treinamento</td></tr>
 <tr><td>Como chutar sem fórmula?</td><td>olhar os vizinhos</td><td>k-NN</td></tr>
 <tr><td>100% é confiável?</td><td>esconder parte dos dados</td><td>generalização, overfitting, treino/teste</td></tr>
-<tr><td>Qual k?</td><td>girar o botão e medir</td><td>hiperparâmetro</td></tr></table>
+<tr><td>Qual k?</td><td>girar o botão e medir</td><td>hiperparâmetro</td></tr>
+<tr><td>Um modelo pode ser lido em voz alta?</td><td>perguntas em sequência</td><td>árvore de decisão</td></tr></table>
 <p>Três perguntas ficaram abertas, e são o programa das próximas aulas:</p>
-<p>1. Escolhemos o melhor k olhando a nota do teste. Isso não é trapacear um pouquinho? → <em>validação cruzada</em><br>2. Como uma fórmula "aprende" quando há dezenas de medidas, não só a área? → <em>regressão linear e logística</em><br>3. Existe modelo que resume os exemplos em regras legíveis? → <em>árvores de decisão</em></p>
+<p>1. Escolhemos o melhor k olhando a nota do teste. Isso não é trapacear um pouquinho? → <em>validação cruzada</em><br>2. Como uma fórmula "aprende" quando há dezenas de medidas, não só a área? → <em>regressão linear e logística</em><br>3. Como a árvore decide qual pergunta fazer primeiro? → <em>impureza e ganho de informação</em></p>
+<h3 style="margin-top:34px">Teste você mesmo</h3>
+<p>Sete perguntas sobre tudo o que passou. Responda antes de fechar a aba.</p>
+<div class="widget"><div class="quiz" id="quiz9"></div><div class="out" id="quiz9Out"></div></div>
 </div></section>
 
 <section class="block" id="s10"><div class="wrap">
@@ -473,6 +477,26 @@ window.STR = {
 
   // bloco 4 — preço e quiz
   priceLabel: "R$ {v} mil",
+  quiz9Score: "{right} de {total}. ",
+  quiz9Perfect: "Você entendeu a aula inteira.",
+  quiz9Good: "Boa. Reveja os blocos das que erraram.",
+  quiz9Weak: "Vale reabrir os Revelar dos blocos 5 e 7 — são os que sustentam o resto.",
+  quiz9: [
+    ["Por que escrever regras à mão não resolve o spam?",
+     ["Sempre aparece um caso que a regra não previu", "Computadores não conseguem ler texto", "As regras ficam lentas demais"], 0],
+    ["Quando é que um sistema aprende?",
+     ["Quando alguém programa muitas regras nele", "Quando seu desempenho na tarefa melhora com a experiência", "Quando ele tem acesso à internet"], 1],
+    ["Dados sem etiqueta servem para quê?",
+     ["Para nada, sem gabarito não dá para fazer nada", "Para prever a resposta certa de casos novos", "Para encontrar grupos e padrões escondidos"], 2],
+    ["\"Prever quantos dias um paciente ficará internado\" é um problema de…",
+     ["Regressão", "Classificação", "Aprendizado não supervisionado"], 0],
+    ["Em preço = a × área + b, o que o treinamento ajusta?",
+     ["A área dos apartamentos", "Os números a e b", "A quantidade de exemplos"], 1],
+    ["Um modelo acerta 100% no treino e 70% no teste. O que está acontecendo?",
+     ["Ele está pronto para uso", "Ele está decorando, não generalizando", "Faltam medidas na tabela"], 1],
+    ["Para que serve separar treino e teste?",
+     ["Para treinar duas vezes e melhorar o ajuste", "Para deixar o treinamento mais rápido", "Para medir se o modelo acerta casos que ainda não viu"], 2]
+  ],
   quizC: "classificação",
   quizR: "regressão",
   quizAnswer: "  → é {a}",
