@@ -1,4 +1,0 @@
-marimo==0.24.0
-scikit-learn
-matplotlib
-numpy
