@@ -88,6 +88,13 @@
 <tr><td><strong>Supervised</strong></td><td>yes</td><td>learn <code>input → answer</code></td><td>spam, diagnosis, price forecasting, speech recognition</td></tr>
 <tr><td><strong>Unsupervised</strong></td><td>no</td><td>find groups and patterns</td><td>customer segments, unusual fraud, grouping news stories</td></tr></table>
 <p>There is a third family, <strong>reinforcement learning</strong> (learning by trial and reward, as in games and robotics). This class stays in supervised learning, where most everyday applications live.</p>
+<p>One piece is missing. The fruit already arrived as numbers &mdash; weight and sweetness &mdash; but the three messages in block 1 were plain text. How would a model look at them? Like this:</p>
+<table><tr><th>Message</th><th># of "!"</th><th>has a link</th><th>words in caps</th><th>spam?</th></tr>
+<tr><td><strong>A</strong> FREE iPhone</td><td>3</td><td>0</td><td>2</td><td>yes</td></tr>
+<tr><td><strong>B</strong> card statement</td><td>0</td><td>1</td><td>0</td><td>no</td></tr>
+<tr><td><strong>C</strong> Saturday's show</td><td>0</td><td>0</td><td>0</td><td>no</td></tr></table>
+<p>Every message became a row of three numbers plus the label, exactly the shape of the fruit table. <mark>All data has to become numbers before any model; this is called representation.</mark> Deciding <em>which</em> numbers to pull out is half the work, and it is a human decision: notice that the table above already threw away who sent the message, the time of day, the language.</p>
+<p>And a warning that holds for the rest of the class: <strong>a model learns what the examples show, including the mistakes of whoever labeled them</strong>. If the person who flagged the emails mixed up promotions with scams, the model will mix them up too.</p>
 </div></details>
 </div></section>
 

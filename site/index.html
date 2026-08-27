@@ -88,6 +88,13 @@
 <tr><td><strong>Supervisionado</strong></td><td>sim</td><td>aprender <code>entrada → resposta</code></td><td>spam, diagnóstico, previsão de preço, reconhecer voz</td></tr>
 <tr><td><strong>Não supervisionado</strong></td><td>não</td><td>encontrar grupos e padrões</td><td>segmentar clientes, detectar fraude atípica, agrupar notícias</td></tr></table>
 <p>Existe uma terceira família, o <strong>aprendizado por reforço</strong> (aprender por tentativa e recompensa, como em jogos e robôs). Esta aula fica no supervisionado, onde estão a maioria das aplicações do dia a dia.</p>
+<p>Falta uma peça. As frutas já chegaram em números &mdash; peso e doçura &mdash; mas as três mensagens do bloco 1 eram texto puro. Como um modelo olharia para elas? Assim:</p>
+<table><tr><th>Mensagem</th><th>nº de "!"</th><th>tem link</th><th>palavras em maiúsculas</th><th>spam?</th></tr>
+<tr><td><strong>A</strong> iPhone GRÁTIS</td><td>3</td><td>0</td><td>2</td><td>sim</td></tr>
+<tr><td><strong>B</strong> fatura do cartão</td><td>0</td><td>1</td><td>0</td><td>não</td></tr>
+<tr><td><strong>C</strong> show de sábado</td><td>0</td><td>0</td><td>0</td><td>não</td></tr></table>
+<p>Cada mensagem virou uma linha de três números mais a etiqueta, exatamente o formato das frutas. <mark>Todo dado precisa virar números antes de qualquer modelo; isso se chama representação.</mark> Decidir <em>quais</em> números extrair é metade do trabalho, e é uma decisão humana: repare que a tabela acima já jogou fora quem enviou a mensagem, a hora, o idioma.</p>
+<p>E um aviso que vale para o resto da aula: <strong>o modelo aprende o que os exemplos mostram, inclusive os erros de quem rotulou</strong>. Se quem marcou os e-mails confundiu promoção com golpe, o modelo vai confundir também.</p>
 </div></details>
 </div></section>
 
