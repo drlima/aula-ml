@@ -180,17 +180,6 @@ print(modelo.intercept_)       # o "b" do slider: o ponto de partida</code></pre
 <div class="legend"><span><i class="dot" style="background:var(--coral)"></i>laranja</span><span><i class="dot" style="background:var(--teal)"></i>maçã</span><span><i class="dot" style="background:#fff;border:2px solid var(--ink)"></i>fruta nova</span></div>
 <div class="out" id="knnOut">Toque no gráfico.</div>
 </div>
-<h3 style="margin-top:30px">Três modelos, os mesmos dez pontos</h3>
-<p style="font-size:16px;color:var(--ink-2)">O gráfico acima tem 60 frutas: ótimo para brincar, ruim para enxergar o mecanismo. Aqui embaixo são só dez, e você pode ver <strong>três modelos diferentes decidindo o mesmo caso</strong>, passo a passo. Repare que eles nem sempre concordam &mdash; e que o k também muda a resposta.</p>
-<div class="widget">
-<div class="ctrls">
-<button id="stepBtn">Ver o passo a passo</button>
-<label>modelo <span class="seg" id="stepModel" role="group" aria-label="modelo"><button class="ghost small" aria-pressed="true">vizinhos</button><button class="ghost small" aria-pressed="false">reta</button><button class="ghost small" aria-pressed="false">árvore</button></span></label>
-<label id="stepKWrap">k <span class="seg" id="stepK" role="group" aria-label="k"><button class="ghost small" aria-pressed="false">1</button><button class="ghost small" aria-pressed="true">3</button><button class="ghost small" aria-pressed="false">5</button></span></label>
-</div>
-<svg id="svgSteps" viewBox="0 0 700 340" width="100%" aria-label="Como o k-NN decide, passo a passo"></svg>
-<div class="out" id="stepOut"></div>
-</div>
 <details class="code"><summary>O mesmo, em Python</summary><div class="in">
 <p class="tie">A fruta que você colocou no gráfico é a linha <code>fruta_nova</code>, e o slider do k é o <code>n_neighbors</code>.</p>
 <pre><code class="py">from sklearn.neighbors import KNeighborsClassifier
@@ -209,6 +198,16 @@ print(modelo.predict(fruta_nova))             # a etiqueta que venceu a votaçã
 <p>Repare que aqui não há fórmula com números em branco. O modelo simplesmente <em>guarda</em> os exemplos. E ainda assim é ML: com mais frutas provadas, a votação fica mais confiável. Então "modelo" é um termo largo: às vezes é uma fórmula ajustada, às vezes é uma memória organizada. O que todos têm em comum é que <mark>transformam exemplos passados em previsões para casos novos</mark>.</p>
 <p>O mapa de decisão pinta o que o modelo responderia em <em>cada</em> ponto do gráfico. Note como com k = 1 ele fica cheio de ilhas estranhas ao redor de frutas isoladas, e como as fronteiras suavizam quando k cresce. Guarde essa imagem para o próximo bloco.</p>
 </div></details>
+<h3 style="margin-top:30px">Em câmera lenta</h3>
+<p style="font-size:16px;color:var(--ink-2)">O Revelar descreveu três passos. Veja os três acontecendo.</p>
+<div class="widget">
+<div class="ctrls">
+<button id="stepBtn">Ver o passo a passo</button>
+<label id="stepKWrap">k <span class="seg" id="stepK" role="group" aria-label="k"><button class="ghost small" aria-pressed="false">1</button><button class="ghost small" aria-pressed="true">3</button><button class="ghost small" aria-pressed="false">5</button></span></label>
+</div>
+<svg id="svgSteps" viewBox="0 0 700 340" width="100%" aria-label="Como o k-NN decide, passo a passo"></svg>
+<div class="out" id="stepOut"></div>
+</div>
 </div></section>
 
 <section class="block" id="s7"><div class="wrap wide">
@@ -369,6 +368,14 @@ base64.b64encode(buf.getvalue()).decode()</code></pre>
 </div>
 </div>
 
+<h3 style="margin-top:34px">A mesma ideia, vista de cima</h3>
+<p>Cada caixa da árvore é uma pergunta, e cada pergunta é um corte no gráfico. Aqui estão as frutas do bloco 6 de volta, com os dois cortes que uma árvore de profundidade 2 escolheria. Este desenho não usa Python: roda direto no navegador.</p>
+<div class="widget">
+<div class="ctrls"><button id="cutsBtn">Ver os cortes</button></div>
+<svg id="svgCuts" viewBox="0 0 700 340" width="100%" aria-label="Os cortes de uma árvore de decisão sobre as frutas"></svg>
+<div class="out" id="cutsOut"></div>
+</div>
+
 <details class="reveal"><summary>Revelar</summary><div class="in">
 <p>Troque <code>n_neighbors=1</code> por 7 e rode de novo. Troque <code>load_iris</code> por <code>load_wine</code> (vinhos, 13 análises químicas) ou <code>load_breast_cancer</code> (exames, benigno/maligno). O código não muda; só a tabela muda. Essa é a promessa do scikit-learn e o motivo de ML ser útil em tantas áreas.</p>
 <p><strong>Desafio para casa:</strong> troque <code>KNeighborsClassifier</code> por <code>DecisionTreeClassifier</code> (<code>from sklearn.tree import DecisionTreeClassifier</code>). Repare que <code>fit</code>, <code>predict</code> e <code>score</code> continuam iguais.</p>
@@ -500,15 +507,10 @@ window.STR = {
   knn1: "Passo 1: medir a distância dela até cada fruta conhecida.",
   knn2: "Passo 2: ficar só com as k mais próximas e descartar o resto.",
   knn3: "Passo 3: a etiqueta mais comum entre elas vence.",
-  lin0: "Chegou uma fruta nova. Agora sem olhar vizinho nenhum.",
-  lin1: "Passo 1: procurar a reta que melhor separa as duas cores — é a mesma conta do bloco 5, só que a resposta a imitar é 0 ou 1.",
-  lin2: "Passo 2: a reta vira uma fronteira. De um lado o modelo responde uma coisa, do outro, outra.",
-  lin3: "Passo 3: ver de que lado a fruta nova caiu.",
-  linResult: "O valor previsto foi {v}: acima de 0,5 é {apple}, abaixo é {orange} → o modelo diz {winner}.",
-  tree0: "Chegou uma fruta nova. Agora o modelo vai fazer perguntas.",
-  tree1: "Passo 1: a pergunta que melhor separa as cores corta o gráfico em dois.",
-  tree2: "Passo 2: dentro do pedaço onde a fruta caiu, uma segunda pergunta.",
-  tree3: "Passo 3: a caixa onde ela parou já tem uma resposta pronta.",
+  tree0: "Uma árvore faz perguntas sobre uma medida de cada vez.",
+  tree1: "Primeira pergunta: a que melhor separa as cores. Ela corta o gráfico em dois.",
+  tree2: "Segunda pergunta, feita só dentro do pedaço onde a fruta nova caiu.",
+  tree3: "As duas perguntas fecham uma caixa, e a caixa já tem uma resposta pronta.",
   treeQ: "{feat} ≤ {t}?",
   treeResult: "Nessa caixa há {apples} × {oranges} → o modelo diz {winner}.",
   rank: ["1ª", "2ª", "3ª", "4ª", "5ª"],

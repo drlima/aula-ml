@@ -122,39 +122,64 @@ function drawKnn(){const svg=$("#svgKnn"),{W,H,pad}=K6,k=+$("#slK").value;svg.in
   fruits.forEach(f=>el("circle",{cx:sx(f.x,W,pad),cy:sy(f.y,H,pad),r:7,fill:fcol(f),stroke:"#fff","stroke-width":1.5},svg));
   if(novo){el("circle",{cx:sx(novo.x,W,pad),cy:sy(novo.y,H,pad),r:11,fill:"#fff",stroke:C.ink,"stroke-width":3},svg);el("text",{x:sx(novo.x,W,pad),y:sy(novo.y,H,pad)-16,"font-size":13,"text-anchor":"middle"},svg).textContent="?"}}
 $("#svgKnn").addEventListener("click",e=>{const svg=e.currentTarget,r=svg.getBoundingClientRect(),px=(e.clientX-r.left)/r.width*K6.W,py=(e.clientY-r.top)/r.height*K6.H;
-  novo={x:P.x0+(px-K6.pad)/(K6.W-2*K6.pad)*(P.x1-P.x0),y:P.y0+(K6.H-K6.pad-py)/(K6.H-2*K6.pad)*(P.y1-P.y0)};drawKnn()});
+  novo={x:P.x0+(px-K6.pad)/(K6.W-2*K6.pad)*(P.x1-P.x0),y:P.y0+(K6.H-K6.pad-py)/(K6.H-2*K6.pad)*(P.y1-P.y0)};drawKnn();drawSteps(1)});
 $("#slK").oninput=drawKnn;$("#mapToggle").onchange=drawKnn;
-$("#shuffleBtn").onclick=()=>{seed=Math.floor(Math.random()*1e6)+1;makeFruits();novo=null;drawLabels();drawKnn();drawSplit()};
+$("#shuffleBtn").onclick=()=>{seed=Math.floor(Math.random()*1e6)+1;makeFruits();novo=null;drawLabels();drawKnn();drawSplit();drawSteps(1)};
 drawKnn();
 
-// 6b: os mesmos pontos, tres modelos, tres mecanismos diferentes
+// 6b: camera lenta — os mesmos tres passos que o Revelar acabou de descrever
 const DEMO=[{x:120,y:0.70,c:1},{x:135,y:0.62,c:1},{x:150,y:0.74,c:1},{x:160,y:0.55,c:1},{x:128,y:0.32,c:1},
             {x:205,y:0.42,c:0},{x:220,y:0.35,c:0},{x:195,y:0.30,c:0},{x:235,y:0.48,c:0},{x:215,y:0.72,c:1}];
-const DNEW={x:192,y:0.55};   // longe do 1o corte da arvore, para nao ficar ambiguo
+const DNEW={x:192,y:0.55};
 const DG={W:700,H:340,pad:52};
 const SX=f=>sx(f.x,DG.W,DG.pad), SY=f=>sy(f.y,DG.H,DG.pad);
 const maioria=g=>g.filter(f=>f.c===1).length*2>g.length?1:0;
-
-// --- modelo 1: vizinhos mais proximos ---
 const dist=(a,b)=>Math.hypot((a.x-b.x)/(P.x1-P.x0),(a.y-b.y)/(P.y1-P.y0));
-const demoRank=DEMO.map((f,i)=>({f,i,d:dist(f,DNEW)})).sort((u,v)=>u.d-v.d);
+// se o aluno ja colocou uma fruta no playground, a camera lenta mostra o caso dele:
+// as dez frutas mais proximas, ordenadas por peso para a varredura ir da esquerda para a direita
+const slowData=()=>novo
+  ? {pts:fruits.map(f=>({f,d:dist(f,novo)})).sort((a,b)=>a.d-b.d).slice(0,10).map(o=>o.f).sort((a,b)=>a.x-b.x),ref:novo}
+  : {pts:DEMO,ref:DNEW};
+const drawPts=(svg,pts,fade)=>pts.forEach((f,i)=>el("circle",{cx:SX(f),cy:SY(f),r:8,fill:fcol(f),
+  stroke:"#fff","stroke-width":2,opacity:fade&&fade(f,i)?.25:1},svg));
+const drawNew=(svg,p)=>{el("circle",{cx:SX(p),cy:SY(p),r:12,fill:"#fff",stroke:C.ink,"stroke-width":3},svg);
+  el("text",{x:SX(p),y:SY(p)+5,"font-size":14,"text-anchor":"middle",fill:C.ink},svg).textContent="?"};
+const winnerTag=c=>`<strong>${c?S.apple:S.orange}</strong>`;
 
-// --- modelo 2: regressao linear usada como limiar (minimos quadrados sobre a etiqueta 0/1) ---
-const nX=v=>(v-P.x0)/(P.x1-P.x0), nY=v=>(v-P.y0)/(P.y1-P.y0);
-function fitLine(data){const A=[[0,0,0],[0,0,0],[0,0,0]],b=[0,0,0];
-  data.forEach(f=>{const v=[1,nX(f.x),nY(f.y)];
-    for(let i=0;i<3;i++){for(let j=0;j<3;j++)A[i][j]+=v[i]*v[j];b[i]+=v[i]*f.c}});
-  const M=A.map((r,i)=>[...r,b[i]]);                       // eliminacao de Gauss
-  for(let c=0;c<3;c++){let pv=c;
-    for(let r=c+1;r<3;r++)if(Math.abs(M[r][c])>Math.abs(M[pv][c]))pv=r;
-    [M[c],M[pv]]=[M[pv],M[c]];
-    for(let r=0;r<3;r++)if(r!==c&&M[c][c]){const k=M[r][c]/M[c][c];for(let j=c;j<4;j++)M[r][j]-=k*M[c][j]}}
-  return [0,1,2].map(i=>M[i][3]/M[i][i])}
-const LW=fitLine(DEMO);
-const linVal=p=>LW[0]+LW[1]*nX(p.x)+LW[2]*nY(p.y);
-const linY=x=>P.y0+((0.5-LW[0]-LW[1]*nX(x))/LW[2])*(P.y1-P.y0);   // docura onde o valor da 0,5
+let stepK=3, stepAnim=null;
+function drawSteps(pr){const svg=$("#svgSteps"),{pts,ref}=slowData(),PH=[0.10,0.58,0.76];
+  svg.innerHTML="";
+  const rank=pts.map((f,i)=>({f,i,d:dist(f,ref)})).sort((u,v)=>u.d-v.d);
+  const phase=pr<PH[0]?0:pr<PH[1]?1:pr<PH[2]?2:3;
+  const nMeas=phase===0?0:phase>1?pts.length:Math.ceil((pr-PH[0])/(PH[1]-PH[0])*pts.length);
+  const near=rank.slice(0,stepK),sel=new Set(near.map(o=>o.i));
+  axes(svg,DG.W,DG.H,DG.pad,S.axWeight,S.axSweet);
+  pts.forEach((f,i)=>{if(phase===0)return;if(phase===1&&i>=nMeas)return;
+    const keep=sel.has(i);if(phase===3&&!keep)return;
+    el("line",{x1:SX(ref),y1:SY(ref),x2:SX(f),y2:SY(f),
+      stroke:phase>=2&&keep?fcol(f):C.ink,"stroke-width":phase>=2&&keep?3.5:1.5,
+      "stroke-dasharray":phase>=2&&keep?"":"4 3",opacity:phase>=2?(keep?.95:.12):.55},svg)});
+  drawPts(svg,pts,(f,i)=>phase>=2&&!sel.has(i));
+  if(phase>=2)near.forEach((o,r)=>el("text",{x:SX(o.f),y:SY(o.f)-19,"font-size":13,"text-anchor":"middle",fill:C.ink},svg).textContent=S.rank[r]);
+  drawNew(svg,ref);
+  const v1=near.filter(o=>o.f.c===1).length,v0=stepK-v1;
+  const cap=[S.knn0,S.knn1,S.knn2,S.knn3][phase];
+  $("#stepOut").innerHTML=phase<3?cap:cap+" "+T(S.voteResult,{
+    vote:stepK===1?S.voteOne:T(S.voteMany,{k:stepK}),
+    apples:`<span style="color:${C.teal}">${v1} ${v1===1?S.apple:S.applePl}</span>`,
+    oranges:`<span style="color:${C.coral}">${v0} ${v0===1?S.orange:S.orangePl}</span>`,
+    winner:winnerTag(v1>v0?1:0)})}
+const stopSteps=()=>{if(stepAnim){cancelAnimationFrame(stepAnim);stepAnim=null}};
+$("#stepBtn").onclick=()=>{stopSteps();const DUR=5200,t0=performance.now();
+  const f=now=>{const pr=Math.min((now-t0)/DUR,1);drawSteps(pr);
+    stepAnim=pr<1?requestAnimationFrame(f):null};
+  stepAnim=requestAnimationFrame(f)};
+$$("#stepK button").forEach((b,i)=>b.onclick=()=>{stepK=[1,3,5][i];
+  $$("#stepK button").forEach((x,j)=>x.setAttribute("aria-pressed",i===j));
+  stopSteps();drawSteps(1)});
+drawSteps(1);
 
-// --- modelo 3: arvore de decisao (corte guloso por Gini) ---
+// 8b: a mesma arvore vista de cima. Nao depende do Pyodide: e desenhada aqui.
 const gini=g=>{if(!g.length)return 0;const p=g.filter(f=>f.c===1).length/g.length;return 1-p*p-(1-p)*(1-p)};
 function bestSplit(data){let best=null;
   ["x","y"].forEach(k=>{const vals=[...new Set(data.map(f=>f[k]))].sort((a,b)=>a-b);
@@ -170,106 +195,47 @@ const T2=gini(T1side)>0?bestSplit(T1side):null;
 const T2side=T2?(DNEW[T2.k]<=T2.t?T2.L:T2.R):T1side;
 const treePred=p=>{const s1=p[T1.k]<=T1.t?T1.L:T1.R;
   return maioria(s1===T1side&&T2?(p[T2.k]<=T2.t?T2.L:T2.R):s1)};
-
-// --- desenho compartilhado ---
-const stepClip=svg=>{const c=el("clipPath",{id:"stepClip"},svg);
-  el("rect",{x:DG.pad,y:DG.pad,width:DG.W-2*DG.pad,height:DG.H-2*DG.pad},c)};
-function paintMap(svg,pred,alpha){
+function paintCuts(svg,alpha){
   // a opacidade fica no grupo: se ficasse em cada celula, as sobreposicoes somariam e apareceria um quadriculado
-  const g=el("g",{"shape-rendering":"crispEdges","clip-path":"url(#stepClip)",opacity:alpha},svg);
+  const c=el("clipPath",{id:"cutsClip"},svg);
+  el("rect",{x:DG.pad,y:DG.pad,width:DG.W-2*DG.pad,height:DG.H-2*DG.pad},c);
+  const g=el("g",{"shape-rendering":"crispEdges","clip-path":"url(#cutsClip)",opacity:alpha},svg);
   const nx=44,ny=24,cw=(DG.W-2*DG.pad)/nx,ch=(DG.H-2*DG.pad)/ny;
   for(let i=0;i<nx;i++)for(let j=0;j<ny;j++){
     const x=P.x0+(i+.5)/nx*(P.x1-P.x0),y=P.y0+(j+.5)/ny*(P.y1-P.y0);
     el("rect",{x:sx(x,DG.W,DG.pad)-cw/2,y:sy(y,DG.H,DG.pad)-ch/2,width:cw+.6,height:ch+.6,
-      fill:pred({x,y})?C.teal:C.coral},g)}}
-const drawPts=(svg,fade)=>DEMO.forEach((f,i)=>el("circle",{cx:SX(f),cy:SY(f),r:8,fill:fcol(f),
-  stroke:"#fff","stroke-width":2,opacity:fade&&fade(f,i)?.25:1},svg));
-const drawNew=svg=>{el("circle",{cx:SX(DNEW),cy:SY(DNEW),r:12,fill:"#fff",stroke:C.ink,"stroke-width":3},svg);
-  el("text",{x:SX(DNEW),y:SY(DNEW)+5,"font-size":14,"text-anchor":"middle",fill:C.ink},svg).textContent="?"};
-const winnerTag=c=>`<strong>${c?S.apple:S.orange}</strong>`;
-
-// --- passo a passo: vizinhos ---
-function stepKnn(svg,pr){const PH=[0.10,0.58,0.76];
+      fill:treePred({x,y})?C.teal:C.coral},g)}}
+let cutsAnim=null;
+function drawCuts(pr){const svg=$("#svgCuts"),PH=[0.10,0.42,0.70];svg.innerHTML="";
   const phase=pr<PH[0]?0:pr<PH[1]?1:pr<PH[2]?2:3;
-  const nMeas=phase===0?0:phase>1?DEMO.length:Math.ceil((pr-PH[0])/(PH[1]-PH[0])*DEMO.length);
-  const near=demoRank.slice(0,stepK),sel=new Set(near.map(o=>o.i));
+  if(phase>=3)paintCuts(svg,.16);
   axes(svg,DG.W,DG.H,DG.pad,S.axWeight,S.axSweet);
-  DEMO.forEach((f,i)=>{if(phase===0)return;if(phase===1&&i>=nMeas)return;
-    const keep=sel.has(i);if(phase===3&&!keep)return;
-    el("line",{x1:SX(DNEW),y1:SY(DNEW),x2:SX(f),y2:SY(f),
-      stroke:phase>=2&&keep?fcol(f):C.ink,"stroke-width":phase>=2&&keep?3.5:1.5,
-      "stroke-dasharray":phase>=2&&keep?"":"4 3",opacity:phase>=2?(keep?.95:.12):.55},svg)});
-  drawPts(svg,(f,i)=>phase>=2&&!sel.has(i));
-  if(phase>=2)near.forEach((o,r)=>el("text",{x:SX(o.f),y:SY(o.f)-19,"font-size":13,"text-anchor":"middle",fill:C.ink},svg).textContent=S.rank[r]);
-  drawNew(svg);
-  const v1=near.filter(o=>o.f.c===1).length,v0=stepK-v1;
-  const cap=[S.knn0,S.knn1,S.knn2,S.knn3][phase];
-  $("#stepOut").innerHTML=phase<3?cap:cap+" "+T(S.voteResult,{
-    vote:stepK===1?S.voteOne:T(S.voteMany,{k:stepK}),
-    apples:`<span style="color:${C.teal}">${v1} ${v1===1?S.apple:S.applePl}</span>`,
-    oranges:`<span style="color:${C.coral}">${v0} ${v0===1?S.orange:S.orangePl}</span>`,
-    winner:winnerTag(v1>v0?1:0)})}
-
-// --- passo a passo: reta como limiar ---
-function stepLin(svg,pr){const PH=[0.10,0.52,0.74];
-  const phase=pr<PH[0]?0:pr<PH[1]?1:pr<PH[2]?2:3;
-  if(phase>=2)paintMap(svg,p=>linVal(p)>=0.5?1:0,.16);
-  axes(svg,DG.W,DG.H,DG.pad,S.axWeight,S.axSweet);
-  if(phase>=1){                                  // a reta gira da horizontal ate o ajuste
-    const t=phase===1?(pr-PH[0])/(PH[1]-PH[0]):1,e=1-Math.pow(1-t,3);
-    const meio=(P.y0+P.y1)/2, yA=meio+(linY(P.x0)-meio)*e, yB=meio+(linY(P.x1)-meio)*e;
-    el("line",{x1:sx(P.x0,DG.W,DG.pad),y1:sy(yA,DG.H,DG.pad),x2:sx(P.x1,DG.W,DG.pad),y2:sy(yB,DG.H,DG.pad),
-      stroke:"#7B61FF","stroke-width":4,"stroke-linecap":"round","clip-path":"url(#stepClip)"},svg)}
-  drawPts(svg);
-  drawNew(svg);
-  const v=linVal(DNEW),c=v>=0.5?1:0;
-  const cap=[S.lin0,S.lin1,S.lin2,S.lin3][phase];
-  $("#stepOut").innerHTML=phase<3?cap:cap+" "+T(S.linResult,{
-    v:dec(v.toFixed(2)),apple:S.apple,orange:S.orange,winner:winnerTag(c)})}
-
-// --- passo a passo: arvore de decisao ---
-function stepTree(svg,pr){const PH=[0.10,0.42,0.70];
-  const phase=pr<PH[0]?0:pr<PH[1]?1:pr<PH[2]?2:3;
-  if(phase>=3)paintMap(svg,treePred,.16);
-  axes(svg,DG.W,DG.H,DG.pad,S.axWeight,S.axSweet);
-  const corte=(sp,dentro,cor)=>{                 // linha do corte, inteira ou so no pedaco
-    const vert=sp.k==="x";
+  const corte=(sp,faixa,cor)=>{const vert=sp.k==="x";
     const a=vert?sx(sp.t,DG.W,DG.pad):sy(sp.t,DG.H,DG.pad);
-    const lo=vert?(dentro?sy(dentro[1],DG.H,DG.pad):sy(P.y1,DG.H,DG.pad)):(dentro?sx(dentro[0],DG.W,DG.pad):sx(P.x0,DG.W,DG.pad));
-    const hi=vert?(dentro?sy(dentro[0],DG.H,DG.pad):sy(P.y0,DG.H,DG.pad)):(dentro?sx(dentro[1],DG.W,DG.pad):sx(P.x1,DG.W,DG.pad));
+    const lo=vert?(faixa?sy(faixa[1],DG.H,DG.pad):sy(P.y1,DG.H,DG.pad)):(faixa?sx(faixa[0],DG.W,DG.pad):sx(P.x0,DG.W,DG.pad));
+    const hi=vert?(faixa?sy(faixa[0],DG.H,DG.pad):sy(P.y0,DG.H,DG.pad)):(faixa?sx(faixa[1],DG.W,DG.pad):sx(P.x1,DG.W,DG.pad));
     el("line",vert?{x1:a,y1:lo,x2:a,y2:hi,stroke:cor,"stroke-width":3.5,"stroke-linecap":"round"}
                   :{x1:lo,y1:a,x2:hi,y2:a,stroke:cor,"stroke-width":3.5,"stroke-linecap":"round"},svg);
     el("text",{x:vert?a:(lo+hi)/2,y:vert?DG.pad-8:a-9,"font-size":13,"text-anchor":"middle",fill:cor},svg)
       .textContent=T(S.treeQ,{feat:sp.k==="x"?S.featWeight:S.featSweet,
                               t:sp.k==="x"?Math.round(sp.t):dec(sp.t.toFixed(2))})};
   if(phase>=1)corte(T1,null,C.ink);
-  if(phase>=2&&T2){const xr=DNEW[T1.k]<=T1.t?[P.x0,T1.t]:[T1.t,P.x1];
-    corte(T2,T1.k==="x"?xr:[P.y0,P.y1],"#7B61FF")}
-  drawPts(svg,f=>phase>=2&&!T1side.includes(f));
-  drawNew(svg);
+  if(phase>=2&&T2){const faixa=DNEW[T1.k]<=T1.t?[P.x0,T1.t]:[T1.t,P.x1];
+    corte(T2,T1.k==="x"?faixa:[P.y0,P.y1],"#7B61FF")}
+  drawPts(svg,DEMO,f=>phase>=2&&!T1side.includes(f));
+  drawNew(svg,DNEW);
   const v1=T2side.filter(f=>f.c===1).length,v0=T2side.length-v1;
   const cap=[S.tree0,S.tree1,S.tree2,S.tree3][phase];
-  $("#stepOut").innerHTML=phase<3?cap:cap+" "+T(S.treeResult,{
+  $("#cutsOut").innerHTML=phase<3?cap:cap+" "+T(S.treeResult,{
     apples:`<span style="color:${C.teal}">${v1} ${v1===1?S.apple:S.applePl}</span>`,
     oranges:`<span style="color:${C.coral}">${v0} ${v0===1?S.orange:S.orangePl}</span>`,
     winner:winnerTag(maioria(T2side))})}
-
-let stepModel="knn", stepK=3, stepAnim=null;
-function drawSteps(pr){const svg=$("#svgSteps");svg.innerHTML="";stepClip(svg);
-  ({knn:stepKnn,lin:stepLin,tree:stepTree})[stepModel](svg,pr)}
-const stopSteps=()=>{if(stepAnim){cancelAnimationFrame(stepAnim);stepAnim=null}};
-$("#stepBtn").onclick=()=>{stopSteps();const DUR=5200,t0=performance.now();
-  const f=now=>{const pr=Math.min((now-t0)/DUR,1);drawSteps(pr);
-    stepAnim=pr<1?requestAnimationFrame(f):null};
-  stepAnim=requestAnimationFrame(f)};
-$$("#stepModel button").forEach((b,i)=>b.onclick=()=>{stepModel=["knn","lin","tree"][i];
-  $$("#stepModel button").forEach((x,j)=>x.setAttribute("aria-pressed",i===j));
-  $("#stepKWrap").hidden=stepModel!=="knn";
-  stopSteps();drawSteps(1)});
-$$("#stepK button").forEach((b,i)=>b.onclick=()=>{stepK=[1,3,5][i];
-  $$("#stepK button").forEach((x,j)=>x.setAttribute("aria-pressed",i===j));
-  stopSteps();drawSteps(1)});
-drawSteps(1);
+$("#cutsBtn").onclick=()=>{if(cutsAnim)cancelAnimationFrame(cutsAnim);
+  const DUR=4800,t0=performance.now();
+  const f=now=>{const pr=Math.min((now-t0)/DUR,1);drawCuts(pr);
+    cutsAnim=pr<1?requestAnimationFrame(f):null};
+  cutsAnim=requestAnimationFrame(f)};
+drawCuts(1);
 
 // 7: train / test
 function drawSplit(){const hide=+$("#slHide").value/100,k=+$("#slK2").value;$("#vHide").textContent=Math.round(hide*100)+"%";$("#vK2").textContent=k;

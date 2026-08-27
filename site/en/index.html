@@ -180,17 +180,6 @@ print(model.intercept_)        # the "b" slider: the starting point</code></pre>
 <div class="legend"><span><i class="dot" style="background:var(--coral)"></i>orange</span><span><i class="dot" style="background:var(--teal)"></i>apple</span><span><i class="dot" style="background:#fff;border:2px solid var(--ink)"></i>new fruit</span></div>
 <div class="out" id="knnOut">Tap the chart.</div>
 </div>
-<h3 style="margin-top:30px">Three models, the same ten points</h3>
-<p style="font-size:16px;color:var(--ink-2)">The chart above has 60 pieces of fruit: great for playing, poor for seeing the mechanism. Down here there are only ten, and you can watch <strong>three different models decide the same case</strong>, step by step. Notice that they do not always agree &mdash; and that k changes the answer too.</p>
-<div class="widget">
-<div class="ctrls">
-<button id="stepBtn">Watch it step by step</button>
-<label>model <span class="seg" id="stepModel" role="group" aria-label="model"><button class="ghost small" aria-pressed="true">neighbors</button><button class="ghost small" aria-pressed="false">line</button><button class="ghost small" aria-pressed="false">tree</button></span></label>
-<label id="stepKWrap">k <span class="seg" id="stepK" role="group" aria-label="k"><button class="ghost small" aria-pressed="false">1</button><button class="ghost small" aria-pressed="true">3</button><button class="ghost small" aria-pressed="false">5</button></span></label>
-</div>
-<svg id="svgSteps" viewBox="0 0 700 340" width="100%" aria-label="How k-NN decides, step by step"></svg>
-<div class="out" id="stepOut"></div>
-</div>
 <details class="code"><summary>The same thing, in Python</summary><div class="in">
 <p class="tie">The fruit you dropped on the chart is the <code>new_fruit</code> line, and the k slider is <code>n_neighbors</code>.</p>
 <pre><code class="py">from sklearn.neighbors import KNeighborsClassifier
@@ -209,6 +198,16 @@ print(model.predict(new_fruit))               # the label that won the vote</cod
 <p>Notice there is no formula with blanks here. The model simply <em>stores</em> the examples. And it is still ML: with more tasted fruit, the vote gets more reliable. So "model" is a broad word: sometimes it is a fitted formula, sometimes it is an organized memory. What they all share is that they <mark>turn past examples into predictions about new cases</mark>.</p>
 <p>The decision map paints what the model would answer at <em>every</em> point of the chart. Notice how at k = 1 it is full of strange islands around isolated fruit, and how the borders smooth out as k grows. Hold on to that picture for the next block.</p>
 </div></details>
+<h3 style="margin-top:30px">In slow motion</h3>
+<p style="font-size:16px;color:var(--ink-2)">The Reveal described three steps. Watch all three happen.</p>
+<div class="widget">
+<div class="ctrls">
+<button id="stepBtn">Watch it step by step</button>
+<label id="stepKWrap">k <span class="seg" id="stepK" role="group" aria-label="k"><button class="ghost small" aria-pressed="false">1</button><button class="ghost small" aria-pressed="true">3</button><button class="ghost small" aria-pressed="false">5</button></span></label>
+</div>
+<svg id="svgSteps" viewBox="0 0 700 340" width="100%" aria-label="How k-NN decides, step by step"></svg>
+<div class="out" id="stepOut"></div>
+</div>
 </div></section>
 
 <section class="block" id="s7"><div class="wrap wide">
@@ -361,6 +360,14 @@ base64.b64encode(buf.getvalue()).decode()</code></pre>
 </div>
 </div>
 
+<h3 style="margin-top:34px">The same idea, seen from above</h3>
+<p>Every box in the tree is a question, and every question is a cut in the chart. Here is the fruit from block 6 again, with the two cuts a depth-2 tree would pick. This drawing uses no Python: it runs straight in the browser.</p>
+<div class="widget">
+<div class="ctrls"><button id="cutsBtn">Show the cuts</button></div>
+<svg id="svgCuts" viewBox="0 0 700 340" width="100%" aria-label="The cuts a decision tree makes on the fruit"></svg>
+<div class="out" id="cutsOut"></div>
+</div>
+
 <details class="reveal"><summary>Reveal</summary><div class="in">
 <p>Change <code>n_neighbors=1</code> to 7 and run it again. Swap <code>load_iris</code> for <code>load_wine</code> (wines, 13 chemical measurements) or <code>load_breast_cancer</code> (test results, benign/malignant). The code does not change; only the table changes. That is the promise of scikit-learn, and the reason ML is useful in so many fields.</p>
 <p><strong>Homework:</strong> swap <code>KNeighborsClassifier</code> for <code>DecisionTreeClassifier</code> (<code>from sklearn.tree import DecisionTreeClassifier</code>). Notice that <code>fit</code>, <code>predict</code> and <code>score</code> keep their names.</p>
@@ -492,15 +499,10 @@ window.STR = {
   knn1: "Step 1: measure its distance to every piece of fruit we already know.",
   knn2: "Step 2: keep only the k closest ones and drop the rest.",
   knn3: "Step 3: the most common label among them wins.",
-  lin0: "A new piece of fruit arrives. This time without looking at any neighbor.",
-  lin1: "Step 1: search for the line that best separates the two colors — the same arithmetic as block 5, except the answer to imitate is 0 or 1.",
-  lin2: "Step 2: the line becomes a border. On one side the model answers one thing, on the other side the other.",
-  lin3: "Step 3: see which side the new fruit landed on.",
-  linResult: "The predicted value was {v}: above 0.5 means {apple}, below means {orange} → the model says {winner}.",
-  tree0: "A new piece of fruit arrives. This time the model will ask questions.",
-  tree1: "Step 1: the question that best separates the colors cuts the chart in two.",
-  tree2: "Step 2: inside the piece where the fruit landed, a second question.",
-  tree3: "Step 3: the box it ended up in already has an answer waiting.",
+  tree0: "A tree asks questions about one measurement at a time.",
+  tree1: "First question: the one that best separates the colors. It cuts the chart in two.",
+  tree2: "Second question, asked only inside the piece where the new fruit landed.",
+  tree3: "The two questions close a box, and the box already has an answer waiting.",
   treeQ: "{feat} ≤ {t}?",
   treeResult: "That box holds {apples} × {oranges} → the model says {winner}.",
   rank: ["1st", "2nd", "3rd", "4th", "5th"],
