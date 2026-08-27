@@ -98,6 +98,20 @@ textarea{width:100%;min-height:220px;font-family:var(--mono);font-size:14px;line
   /* com a fonte maior os rotulos do eixo y passam da borda do viewBox */
   #svgReg{overflow:visible}
 }
+/* painel de codigo: apendice discreto, distinto do Revelar (que e o punch) */
+details.code{margin:-6px 0 26px;border:1px dashed var(--line);border-radius:12px;background:transparent}
+details.code summary{cursor:pointer;list-style:none;padding:11px 15px;font-family:var(--disp);font-weight:700;font-size:14px;color:var(--ink-2);display:flex;align-items:center;gap:9px}
+details.code summary::-webkit-details-marker{display:none}
+details.code summary::before{content:"</>";font-family:var(--mono);font-size:11px;font-weight:600;color:var(--ink-2);background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 5px}
+details.code[open] summary{color:var(--ink);border-bottom:1px dashed var(--line)}
+details.code .in{padding:13px 15px 15px}
+details.code .tie{font-size:16px;color:var(--ink-2);margin:0 0 11px}
+pre{margin:0;background:#101627;border-radius:10px;padding:14px 16px;overflow-x:auto}
+pre code.py{font-family:var(--mono);font-size:13.5px;line-height:1.65;background:none;padding:0;border-radius:0;color:#E6ECFF;display:block;white-space:pre}
+code .k{color:var(--marker)}
+code .s{color:#8BE9B4}
+code .c{color:#92A0C6;font-style:italic}
+code .n{color:var(--coral)}
 footer{padding:40px 0 60px;color:var(--ink-2);font-size:15px;text-align:center}
 .tag{display:inline-block;font-family:var(--disp);font-weight:700;font-size:13px;padding:3px 10px;border-radius:999px;background:var(--paper-2);color:var(--ink-2);margin-right:6px}
 </style>
@@ -225,6 +239,19 @@ footer{padding:40px 0 60px;color:var(--ink-2);font-size:15px;text-align:center}
 <svg id="svgReg" viewBox="0 0 700 400" width="100%" aria-label="Gráfico área versus preço"></svg>
 <div class="out">Erro total (soma das barras vermelhas): <span class="val" id="errV">—</span></div>
 </div>
+<details class="code"><summary>O mesmo, em Python</summary><div class="in">
+<p class="tie">Os dois sliders que você moveu são estes dois números. Aqui não há botão: o <code>fit</code> faz a busca que o "deixar o computador aprender" fez.</p>
+<pre><code class="py">from sklearn.linear_model import LinearRegression
+
+X = [[45], [52], [60], [68]]   # a área de cada apartamento
+y = [310, 360, 395, 440]       # o preço de cada um
+
+modelo = LinearRegression()
+modelo.fit(X, y)               # procura o melhor a e o melhor b
+
+print(modelo.coef_[0])         # o "a" do slider: a inclinação
+print(modelo.intercept_)       # o "b" do slider: o ponto de partida</code></pre>
+</div></details>
 <details class="reveal"><summary>Revelar</summary><div class="in">
 <p>Você escolheu dois números, <strong>a</strong> e <strong>b</strong>. Enquanto mexia neles, tentava diminuir as barras vermelhas: a distância entre o que a reta <em>prevê</em> e o que aconteceu de verdade. Isso é exatamente o que um computador faz ao "aprender", só que muito mais rápido e para milhares de números de uma vez.</p>
 <p><mark>Um modelo é uma fórmula com espaços em branco. Aprender é preencher os espaços com os números que deixam o erro menor.</mark></p>
@@ -248,6 +275,19 @@ footer{padding:40px 0 60px;color:var(--ink-2);font-size:15px;text-align:center}
 <div class="legend"><span><i class="dot" style="background:var(--coral)"></i>laranja</span><span><i class="dot" style="background:var(--teal)"></i>maçã</span><span><i class="dot" style="background:#fff;border:2px solid var(--ink)"></i>fruta nova</span></div>
 <div class="out" id="knnOut">Toque no gráfico.</div>
 </div>
+<details class="code"><summary>O mesmo, em Python</summary><div class="in">
+<p class="tie">A fruta que você colocou no gráfico é a linha <code>fruta_nova</code>, e o slider do k é o <code>n_neighbors</code>.</p>
+<pre><code class="py">from sklearn.neighbors import KNeighborsClassifier
+
+X = [[150, 0.62], [205, 0.40], [148, 0.66]]   # peso e doçura
+y = ["maçã", "laranja", "maçã"]               # a etiqueta de cada uma
+
+modelo = KNeighborsClassifier(n_neighbors=3)  # o k do slider
+modelo.fit(X, y)                              # aqui, aprender = guardar
+
+fruta_nova = [[170, 0.55]]                    # a que você colocou no gráfico
+print(modelo.predict(fruta_nova))             # a etiqueta que venceu a votação</code></pre>
+</div></details>
 <details class="reveal"><summary>Revelar</summary><div class="in">
 <p>Você provavelmente pensou: "olho as frutas parecidas ao redor". Isso tem nome: <strong>k vizinhos mais próximos</strong> (k-NN). Para classificar uma fruta nova: meça a distância dela a todas as conhecidas, pegue as <strong>k</strong> mais próximas, e a etiqueta vence <strong>por votação</strong>.</p>
 <p>Repare que aqui não há fórmula com números em branco. O modelo simplesmente <em>guarda</em> os exemplos. E ainda assim é ML: com mais frutas provadas, a votação fica mais confiável. Então "modelo" é um termo largo: às vezes é uma fórmula ajustada, às vezes é uma memória organizada. O que todos têm em comum é que <mark>transformam exemplos passados em previsões para casos novos</mark>.</p>
@@ -271,6 +311,20 @@ footer{padding:40px 0 60px;color:var(--ink-2);font-size:15px;text-align:center}
 </div>
 <div class="legend"><span><i class="dot" style="background:var(--ink)"></i>frutas que o modelo viu (treino)</span><span><i class="dot" style="background:#fff;border:2px dashed var(--ink)"></i>frutas escondidas (teste)</span></div>
 </div>
+<details class="code"><summary>O mesmo, em Python</summary><div class="in">
+<p class="tie">O controle de frutas escondidas é o <code>test_size</code>, e as duas barras do gráfico são estas duas notas.</p>
+<pre><code class="py">from sklearn.model_selection import train_test_split
+
+# esconde 30% das frutas antes de treinar
+X_treino, X_teste, y_treino, y_teste = train_test_split(
+    X, y, test_size=0.3, random_state=7)
+
+modelo = KNeighborsClassifier(n_neighbors=1)
+modelo.fit(X_treino, y_treino)             # só enxerga as frutas do treino
+
+print(modelo.score(X_treino, y_treino))    # barra escura: nas que viu
+print(modelo.score(X_teste, y_teste))      # barra roxa: nas escondidas</code></pre>
+</div></details>
 <details class="reveal"><summary>Revelar</summary><div class="in">
 <p>Com k = 1 e 0% escondido, a nota é <strong>100%</strong>. E é uma mentira. Quando perguntamos sobre uma fruta que já está na memória, o vizinho mais próximo dela é <em>ela mesma</em>. O modelo não previu nada: decorou.</p>
 <p>Avaliar no mesmo dado em que se aprendeu é corrigir uma prova cujo gabarito o aluno já leu. Daí a ideia central da disciplina inteira:</p>
@@ -429,6 +483,15 @@ function drawSplit(){const hide=+$("#slHide").value/100,k=+$("#slK2").value;$("#
   el("line",{x1:40,y1:250,x2:300,y2:250,stroke:C.line,"stroke-width":2},s2);el("text",{x:170,y:22,"font-size":14,"text-anchor":"middle"},s2).textContent="Nota do modelo (acertos)";
   if(aTe==null)el("text",{x:170,y:140,"font-size":12,"text-anchor":"middle",fill:"#4A5472"},s2).textContent="esconda algumas frutas para ter uma nota honesta"}
 $("#slHide").oninput=drawSplit;$("#slK2").oninput=drawSplit;drawSplit();
+
+// realce de sintaxe minimo para os paineis de codigo (sem dependencia externa)
+const PY_RE=/(#[^\n]*)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|\b(\d+\.?\d*)\b|\b(from|import|as|def|return|print|if|else|elif|for|in|while|with|class|None|True|False|and|or|not|lambda)\b/g;
+const esc=t=>t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+function highlight(src){let out="",last=0,m;PY_RE.lastIndex=0;
+  while((m=PY_RE.exec(src))!==null){out+=esc(src.slice(last,m.index));
+    const cls=m[1]?"c":m[2]?"s":m[3]?"n":"k";out+=`<span class="${cls}">${esc(m[0])}</span>`;last=PY_RE.lastIndex}
+  return out+esc(src.slice(last))}
+$$("pre code.py").forEach(c=>{c.innerHTML=highlight(c.textContent)});
 
 // 8: pyodide
 let pyReady=null;
