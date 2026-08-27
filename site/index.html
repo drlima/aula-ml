@@ -180,6 +180,16 @@ print(modelo.intercept_)       # o "b" do slider: o ponto de partida</code></pre
 <div class="legend"><span><i class="dot" style="background:var(--coral)"></i>laranja</span><span><i class="dot" style="background:var(--teal)"></i>maçã</span><span><i class="dot" style="background:#fff;border:2px solid var(--ink)"></i>fruta nova</span></div>
 <div class="out" id="knnOut">Toque no gráfico.</div>
 </div>
+<h3 style="margin-top:30px">Como o k-NN decide, em três passos</h3>
+<p style="font-size:16px;color:var(--ink-2)">O gráfico acima tem 60 frutas: ótimo para brincar, ruim para enxergar o mecanismo. Aqui embaixo são só oito. Troque o k e repare que <strong>a resposta pode mudar com os mesmos dados</strong>.</p>
+<div class="widget">
+<div class="ctrls">
+<button id="stepBtn">Ver o passo a passo</button>
+<label>k <span class="seg" id="stepK" role="group" aria-label="k"><button class="ghost small" aria-pressed="false">1</button><button class="ghost small" aria-pressed="true">3</button><button class="ghost small" aria-pressed="false">5</button></span></label>
+</div>
+<svg id="svgSteps" viewBox="0 0 700 340" width="100%" aria-label="Como o k-NN decide, passo a passo"></svg>
+<div class="out" id="stepOut"></div>
+</div>
 <details class="code"><summary>O mesmo, em Python</summary><div class="in">
 <p class="tie">A fruta que você colocou no gráfico é a linha <code>fruta_nova</code>, e o slider do k é o <code>n_neighbors</code>.</p>
 <pre><code class="py">from sklearn.neighbors import KNeighborsClassifier
@@ -467,6 +477,11 @@ window.STR = {
   regFormula: "preço = {a} × área {sign} {b}",
 
   // bloco 6 — votação dos vizinhos
+  step0: "Chegou uma fruta nova. Só sabemos onde ela cai no gráfico.",
+  step1: "Passo 1: medir a distância dela até cada fruta conhecida.",
+  step2: "Passo 2: ficar só com as k mais próximas e descartar o resto.",
+  step3: "Passo 3: a etiqueta mais comum entre elas vence.",
+  rank: ["1ª", "2ª", "3ª", "4ª", "5ª"],
   voteOne: "Votação com o vizinho mais próximo",
   voteMany: "Votação entre os {k} vizinhos",
   voteResult: "{vote}: {apples} × {oranges} → o modelo diz {winner}.",

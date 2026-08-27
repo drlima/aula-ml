@@ -93,6 +93,7 @@ textarea{width:100%;min-height:220px;font-family:var(--mono);font-size:14px;line
   #svgLabels text{font-size:24px}
   #svgReg text{font-size:25px}
   #svgKnn text{font-size:26px}
+  #svgSteps text{font-size:26px}
   /* a arvore e larga: rola na horizontal em vez de encolher ate ficar ilegivel */
   #figTree{overflow-x:auto;justify-content:flex-start}
   #figTree img{width:auto;max-width:none;height:320px}

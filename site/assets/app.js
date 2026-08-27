@@ -127,6 +127,54 @@ $("#slK").oninput=drawKnn;$("#mapToggle").onchange=drawKnn;
 $("#shuffleBtn").onclick=()=>{seed=Math.floor(Math.random()*1e6)+1;makeFruits();novo=null;drawLabels();drawKnn();drawSplit()};
 drawKnn();
 
+// 6b: ilustracao passo a passo com poucos pontos (o mecanismo, nao o playground)
+const DEMO=[{x:120,y:0.70,c:1},{x:135,y:0.62,c:1},{x:150,y:0.74,c:1},{x:160,y:0.55,c:1},
+            {x:205,y:0.42,c:0},{x:220,y:0.35,c:0},{x:195,y:0.30,c:0},{x:235,y:0.48,c:0}];
+const DNEW={x:180,y:0.52};
+const DG={W:700,H:340,pad:52};
+const dist=(a,b)=>Math.hypot((a.x-b.x)/(P.x1-P.x0),(a.y-b.y)/(P.y1-P.y0));
+const demoRank=DEMO.map((f,i)=>({f,i,d:dist(f,DNEW)})).sort((u,v)=>u.d-v.d);
+const PH=[0.10,0.58,0.76];          // onde termina cada fase da animacao
+let stepK=3, stepAnim=null;
+function drawSteps(pr){
+  const svg=$("#svgSteps"),{W,H,pad}=DG;svg.innerHTML="";
+  axes(svg,W,H,pad,S.axWeight,S.axSweet);
+  const X=f=>sx(f.x,W,pad),Y=f=>sy(f.y,H,pad);
+  const phase=pr<PH[0]?0:pr<PH[1]?1:pr<PH[2]?2:3;
+  const nMeas=phase===0?0:phase>1?DEMO.length:Math.ceil((pr-PH[0])/(PH[1]-PH[0])*DEMO.length);
+  const near=demoRank.slice(0,stepK),sel=new Set(near.map(o=>o.i));
+  DEMO.forEach((f,i)=>{
+    if(phase===0)return;
+    if(phase===1&&i>=nMeas)return;
+    const keep=sel.has(i);
+    if(phase===3&&!keep)return;
+    el("line",{x1:X(DNEW),y1:Y(DNEW),x2:X(f),y2:Y(f),
+      stroke:phase>=2&&keep?fcol(f):C.ink,"stroke-width":phase>=2&&keep?3.5:1.5,
+      "stroke-dasharray":phase>=2&&keep?"":"4 3",
+      opacity:phase>=2?(keep?.95:.12):.55},svg)});
+  DEMO.forEach((f,i)=>{const on=sel.has(i)&&phase>=2;
+    el("circle",{cx:X(f),cy:Y(f),r:on?11:8,fill:fcol(f),stroke:"#fff","stroke-width":on?3:2,
+      opacity:phase>=2&&!on?.28:1},svg)});
+  if(phase>=2)near.forEach((o,r)=>el("text",{x:X(o.f),y:Y(o.f)-19,"font-size":13,"text-anchor":"middle",fill:C.ink},svg).textContent=S.rank[r]);
+  el("circle",{cx:X(DNEW),cy:Y(DNEW),r:12,fill:"#fff",stroke:C.ink,"stroke-width":3},svg);
+  el("text",{x:X(DNEW),y:Y(DNEW)+5,"font-size":14,"text-anchor":"middle",fill:C.ink},svg).textContent="?";
+  const v1=near.filter(o=>o.f.c===1).length,v0=stepK-v1,cap=[S.step0,S.step1,S.step2,S.step3][phase];
+  $("#stepOut").innerHTML=phase<3?cap:cap+" "+T(S.voteResult,{
+    vote:stepK===1?S.voteOne:T(S.voteMany,{k:stepK}),
+    apples:`<span style="color:${C.teal}">${v1} ${v1===1?S.apple:S.applePl}</span>`,
+    oranges:`<span style="color:${C.coral}">${v0} ${v0===1?S.orange:S.orangePl}</span>`,
+    winner:`<strong>${v1>v0?S.apple:S.orange}</strong>`});
+}
+const stopSteps=()=>{if(stepAnim){cancelAnimationFrame(stepAnim);stepAnim=null}};
+$("#stepBtn").onclick=()=>{stopSteps();const DUR=5200,t0=performance.now();
+  const f=now=>{const pr=Math.min((now-t0)/DUR,1);drawSteps(pr);
+    stepAnim=pr<1?requestAnimationFrame(f):null};
+  stepAnim=requestAnimationFrame(f)};
+$$("#stepK button").forEach((b,i)=>b.onclick=()=>{stepK=[1,3,5][i];
+  $$("#stepK button").forEach((x,j)=>x.setAttribute("aria-pressed",i===j));
+  stopSteps();drawSteps(1)});
+drawSteps(1);
+
 // 7: train / test
 function drawSplit(){const hide=+$("#slHide").value/100,k=+$("#slK2").value;$("#vHide").textContent=Math.round(hide*100)+"%";$("#vK2").textContent=k;
   const order=fruits.map((f,i)=>({f,key:((i*2654435761)>>>0)%1000})).sort((a,b)=>a.key-b.key);const nHide=Math.round(order.length*hide);
