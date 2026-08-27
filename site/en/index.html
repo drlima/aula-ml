@@ -108,16 +108,15 @@
 <div class="two">
 <div class="widget" style="margin:0"><h3>(a) What is it worth?</h3>
 <svg viewBox="0 0 280 120" width="100%"><defs><linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#1BA39C"/><stop offset="1" stop-color="#7B61FF"/></linearGradient></defs>
-<rect x="20" y="52" width="240" height="14" rx="7" fill="url(#g1)"/><g id="priceKnob"><circle cx="150" cy="59" r="14" fill="#fff" stroke="#17203A" stroke-width="3"/></g>
+<rect x="20" y="52" width="240" height="14" rx="7" fill="url(#g1)"/><g id="priceKnob"><rect x="146" y="43" width="8" height="32" rx="4" fill="#17203A"/></g>
 <text x="20" y="40" font-size="11" fill="#4A5472">$200k</text><text x="200" y="40" font-size="11" fill="#4A5472">$900k</text>
 <text id="priceTxt" x="140" y="100" font-size="16" text-anchor="middle">$480k</text></svg>
-<p style="font-size:15px;color:var(--ink-2);margin:6px 0 0">The answer is a <strong>number on a continuous ruler</strong>: any value between the ends will do.</p></div>
+<p style="font-size:15px;color:var(--ink-2);margin:6px 0 0">The answer is a <strong>number on a continuous ruler</strong>.</p></div>
 <div class="widget" style="margin:0"><h3>(b) Will it sell in 30 days?</h3>
 <svg viewBox="0 0 280 120" width="100%">
 <g id="binA" class="answer"><rect x="30" y="30" width="95" height="70" rx="12" fill="#EAF8F0" stroke="#1E9E5A" stroke-width="3"/><text x="77" y="72" font-size="18" text-anchor="middle" fill="#1E9E5A">yes</text></g>
 <g id="binB" class="answer"><rect x="155" y="30" width="95" height="70" rx="12" fill="#FDEDED" stroke="#D63B3B" stroke-width="3"/><text x="202" y="72" font-size="18" text-anchor="middle" fill="#D63B3B">no</text></g></svg>
-<div class="out" id="sellOut"></div>
-<p style="font-size:15px;color:var(--ink-2);margin:6px 0 0">The answer lands in <strong>one of a few boxes</strong>: there are only these two.</p></div>
+<p style="font-size:15px;color:var(--ink-2);margin:6px 0 0">The answer lands in <strong>one of a few boxes</strong>.</p></div>
 </div>
 <div class="q" style="margin-top:26px">Are these the same kind of problem?</div>
 <details class="reveal"><summary>Reveal</summary><div class="in">
@@ -466,9 +465,6 @@ window.STR = {
 
   // block 4 — price and quiz
   priceLabel: "${v}k",
-  sellOut: "{n} of 4 signals in favor → the model answers {answer}.",
-  sellYes: "yes",
-  sellNo: "no",
   quizC: "classification",
   quizR: "regression",
   quizAnswer: "  → it's {a}",

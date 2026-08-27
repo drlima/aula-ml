@@ -59,10 +59,9 @@ function drawFeats(){const f=feats(),p=priceOf(f);
   $("#priceTxt").textContent=T(S.priceLabel,{v:p});
   const t=Math.max(0,Math.min(1,(p-200)/700));
   $("#priceKnob").setAttribute("transform",`translate(${t*240-130} 0)`);
-  const n=signalsOf(f),yes=n>=3;
+  const yes=signalsOf(f)>=3;      // conta interna, de proposito nao nomeada: modelo so aparece no bloco 5
   [["#binA",yes],["#binB",!yes]].forEach(([sel,on])=>{const g=$(sel);
-    g.querySelector("rect").setAttribute("stroke-width",on?6:3);g.style.opacity=on?1:.3});
-  $("#sellOut").innerHTML=T(S.sellOut,{n,answer:`<strong>${yes?S.sellYes:S.sellNo}</strong>`})}
+    g.querySelector("rect").setAttribute("stroke-width",on?6:3);g.style.opacity=on?1:.3})}
 ["#ftArea","#ftRooms","#ftYear"].forEach(sel=>$(sel).oninput=drawFeats);
 $$("#ftHood button").forEach((b,i)=>b.onclick=()=>{hood=i;$$("#ftHood button").forEach((x,j)=>x.setAttribute("aria-pressed",i===j));drawFeats()});
 drawFeats();

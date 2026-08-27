@@ -108,16 +108,15 @@
 <div class="two">
 <div class="widget" style="margin:0"><h3>(a) Quanto vale?</h3>
 <svg viewBox="0 0 280 120" width="100%"><defs><linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#1BA39C"/><stop offset="1" stop-color="#7B61FF"/></linearGradient></defs>
-<rect x="20" y="52" width="240" height="14" rx="7" fill="url(#g1)"/><g id="priceKnob"><circle cx="150" cy="59" r="14" fill="#fff" stroke="#17203A" stroke-width="3"/></g>
+<rect x="20" y="52" width="240" height="14" rx="7" fill="url(#g1)"/><g id="priceKnob"><rect x="146" y="43" width="8" height="32" rx="4" fill="#17203A"/></g>
 <text x="20" y="40" font-size="11" fill="#4A5472">R$ 200 mil</text><text x="200" y="40" font-size="11" fill="#4A5472">R$ 900 mil</text>
 <text id="priceTxt" x="140" y="100" font-size="16" text-anchor="middle">R$ 480 mil</text></svg>
-<p style="font-size:15px;color:var(--ink-2);margin:6px 0 0">A resposta é um <strong>número numa régua contínua</strong>: qualquer valor entre os extremos serve.</p></div>
+<p style="font-size:15px;color:var(--ink-2);margin:6px 0 0">A resposta é um <strong>número numa régua contínua</strong>.</p></div>
 <div class="widget" style="margin:0"><h3>(b) Vende em 30 dias?</h3>
 <svg viewBox="0 0 280 120" width="100%">
 <g id="binA" class="answer"><rect x="30" y="30" width="95" height="70" rx="12" fill="#EAF8F0" stroke="#1E9E5A" stroke-width="3"/><text x="77" y="72" font-size="18" text-anchor="middle" fill="#1E9E5A">sim</text></g>
 <g id="binB" class="answer"><rect x="155" y="30" width="95" height="70" rx="12" fill="#FDEDED" stroke="#D63B3B" stroke-width="3"/><text x="202" y="72" font-size="18" text-anchor="middle" fill="#D63B3B">não</text></g></svg>
-<div class="out" id="sellOut"></div>
-<p style="font-size:15px;color:var(--ink-2);margin:6px 0 0">A resposta cai em <strong>uma de poucas caixas</strong>: só existem estas duas.</p></div>
+<p style="font-size:15px;color:var(--ink-2);margin:6px 0 0">A resposta cai em <strong>uma de poucas caixas</strong>.</p></div>
 </div>
 <div class="q" style="margin-top:26px">São o mesmo tipo de problema?</div>
 <details class="reveal"><summary>Revelar</summary><div class="in">
@@ -474,9 +473,6 @@ window.STR = {
 
   // bloco 4 — preço e quiz
   priceLabel: "R$ {v} mil",
-  sellOut: "{n} de 4 sinais a favor → o modelo responde {answer}.",
-  sellYes: "sim",
-  sellNo: "não",
   quizC: "classificação",
   quizR: "regressão",
   quizAnswer: "  → é {a}",
