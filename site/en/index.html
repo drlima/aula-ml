@@ -95,19 +95,29 @@
 <div class="eyebrow">Block 4</div>
 <h2>Is the answer a label or a number?</h2>
 <p>The same table of apartments (floor area, bedrooms, neighborhood, year). Two different questions about it:</p>
+<div class="widget">
+<h3>One apartment, four measurements</h3>
+<div class="ctrls">
+<label>floor area <input type="range" id="ftArea" min="40" max="160" step="5" value="80"> <span class="val" id="vArea">80 m²</span></label>
+<label>bedrooms <input type="range" id="ftRooms" min="1" max="4" step="1" value="2"> <span class="val" id="vRooms">2</span></label>
+<label>year <input type="range" id="ftYear" min="1970" max="2025" step="1" value="2005"> <span class="val" id="vYear">2005</span></label>
+<label>neighborhood <span class="seg" id="ftHood" role="group" aria-label="neighborhood"><button class="ghost small" aria-pressed="false">Outer</button><button class="ghost small" aria-pressed="true">Central</button><button class="ghost small" aria-pressed="false">Upscale</button></span></label>
+</div>
+<p style="font-size:15px;color:var(--ink-2);margin:4px 0 0">Both questions below are fed <strong>exactly these four measurements</strong>. Move any one of them and watch both answers change together.</p>
+</div>
 <div class="two">
 <div class="widget" style="margin:0"><h3>(a) What is it worth?</h3>
 <svg viewBox="0 0 280 120" width="100%"><defs><linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#1BA39C"/><stop offset="1" stop-color="#7B61FF"/></linearGradient></defs>
 <rect x="20" y="52" width="240" height="14" rx="7" fill="url(#g1)"/><g id="priceKnob"><circle cx="150" cy="59" r="14" fill="#fff" stroke="#17203A" stroke-width="3"/></g>
 <text x="20" y="40" font-size="11" fill="#4A5472">$200k</text><text x="200" y="40" font-size="11" fill="#4A5472">$900k</text>
 <text id="priceTxt" x="140" y="100" font-size="16" text-anchor="middle">$480k</text></svg>
-<input type="range" id="priceRange" min="200" max="900" value="480" style="width:100%">
-<p style="font-size:15px;color:var(--ink-2);margin:6px 0 0">The answer is a <strong>number on a continuous ruler</strong>.</p></div>
+<p style="font-size:15px;color:var(--ink-2);margin:6px 0 0">The answer is a <strong>number on a continuous ruler</strong>: any value between the ends will do.</p></div>
 <div class="widget" style="margin:0"><h3>(b) Will it sell in 30 days?</h3>
 <svg viewBox="0 0 280 120" width="100%">
-<g id="binA" style="cursor:pointer"><rect x="30" y="30" width="95" height="70" rx="12" fill="#EAF8F0" stroke="#1E9E5A" stroke-width="3"/><text x="77" y="72" font-size="18" text-anchor="middle" fill="#1E9E5A">yes</text></g>
-<g id="binB" style="cursor:pointer"><rect x="155" y="30" width="95" height="70" rx="12" fill="#FDEDED" stroke="#D63B3B" stroke-width="3"/><text x="202" y="72" font-size="18" text-anchor="middle" fill="#D63B3B">no</text></g></svg>
-<p style="font-size:15px;color:var(--ink-2);margin:6px 0 0">The answer lands in <strong>one of a few boxes</strong>. Tap one.</p></div>
+<g id="binA" class="answer"><rect x="30" y="30" width="95" height="70" rx="12" fill="#EAF8F0" stroke="#1E9E5A" stroke-width="3"/><text x="77" y="72" font-size="18" text-anchor="middle" fill="#1E9E5A">yes</text></g>
+<g id="binB" class="answer"><rect x="155" y="30" width="95" height="70" rx="12" fill="#FDEDED" stroke="#D63B3B" stroke-width="3"/><text x="202" y="72" font-size="18" text-anchor="middle" fill="#D63B3B">no</text></g></svg>
+<div class="out" id="sellOut"></div>
+<p style="font-size:15px;color:var(--ink-2);margin:6px 0 0">The answer lands in <strong>one of a few boxes</strong>: there are only these two.</p></div>
 </div>
 <div class="q" style="margin-top:26px">Are these the same kind of problem?</div>
 <details class="reveal"><summary>Reveal</summary><div class="in">
@@ -127,8 +137,8 @@
 <div class="widget">
 <div class="formula">price = <span class="a">a</span> × area + <span class="b">b</span></div>
 <div class="ctrls">
-<label><span style="color:var(--marker);background:var(--ink);padding:0 6px;border-radius:4px">a</span> slope <input type="range" id="slA" min="0" max="16" step="0.1" value="3"> <span class="val" id="vA">3.0</span></label>
-<label><span style="color:#8BE9B4;background:var(--ink);padding:0 6px;border-radius:4px">b</span> starting point <input type="range" id="slB" min="-200" max="400" step="5" value="200"> <span class="val" id="vB">200</span></label>
+<label><span style="color:var(--marker);background:var(--ink);padding:0 6px;border-radius:4px">a</span> slope <input type="range" id="slA" min="-8" max="16" step="0.1" value="-5"> <span class="val" id="vA">-5.0</span></label>
+<label><span style="color:#8BE9B4;background:var(--ink);padding:0 6px;border-radius:4px">b</span> starting point <input type="range" id="slB" min="-400" max="900" step="5" value="850"> <span class="val" id="vB">850</span></label>
 <button id="fitBtn">Let the computer learn</button>
 </div>
 <svg id="svgReg" viewBox="0 0 700 400" width="100%" aria-label="Area versus price chart"></svg>
@@ -422,6 +432,9 @@ window.STR = {
 
   // block 4 — price and quiz
   priceLabel: "${v}k",
+  sellOut: "{n} of 4 signals in favor → the model answers {answer}.",
+  sellYes: "yes",
+  sellNo: "no",
   quizC: "classification",
   quizR: "regression",
   quizAnswer: "  → it's {a}",
@@ -438,6 +451,8 @@ window.STR = {
   ],
 
   // block 5 — regression
+  axArea: "floor area (m²)",
+  axPrice: "price ($ thousands)",
   areaTick: "{v} m²",
   priceTick: "${v}k",
   errValue: "{v}k",

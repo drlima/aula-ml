@@ -71,6 +71,9 @@ details.reveal .in p:last-child{margin:0}
 .quiz .row{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:#fff}
 .quiz .row.right{border-color:var(--ok);background:#EAF8F0}.quiz .row.wrong{border-color:var(--bad);background:#FDEDED}
 .quiz .row span{font-family:var(--disp);font-weight:700;font-size:16px}
+.seg{display:inline-flex;gap:6px;flex-wrap:wrap}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.answer{transition:opacity .15s}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 @media(max-width:700px){.two{grid-template-columns:1fr}.quiz .row{grid-template-columns:1fr}}
 table{border-collapse:collapse;width:100%;font-size:16px;margin:10px 0 20px}
@@ -93,8 +96,6 @@ textarea{width:100%;min-height:220px;font-family:var(--mono);font-size:14px;line
   /* a arvore e larga: rola na horizontal em vez de encolher ate ficar ilegivel */
   #figTree{overflow-x:auto;justify-content:flex-start}
   #figTree img{width:auto;max-width:none;height:320px}
-  /* com a fonte maior os rotulos do eixo y passam da borda do viewBox */
-  #svgReg{overflow:visible}
 }
 /* painel de codigo: apendice discreto, distinto do Revelar (que e o punch) */
 details.code{margin:-6px 0 26px;border:1px dashed var(--line);border-radius:12px;background:transparent}

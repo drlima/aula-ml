@@ -47,9 +47,25 @@ function drawLabels(){const svg=$("#svgLabels"),W=640,H=380,pad=44;svg.innerHTML
   $("#lblLegend").style.visibility=on?"visible":"hidden"}
 $("#lblToggle").onchange=drawLabels;drawLabels();
 
-// 4: price / bins / quiz
-$("#priceRange").oninput=e=>{const v=+e.target.value;$("#priceTxt").textContent=T(S.priceLabel,{v});$("#priceKnob").setAttribute("transform",`translate(${(v-200)/700*240-130} 0)`)};
-const bins=[$("#binA"),$("#binB")];bins.forEach((b,i)=>b.onclick=()=>{bins.forEach((x,j)=>x.querySelector("rect").setAttribute("stroke-width",i===j?6:3))});
+// 4: as mesmas 4 entradas alimentam as duas saidas (regressao e classificacao)
+const HOOD_MULT=[0.8,1.0,1.3];            // quanto o bairro multiplica o preco
+let hood=1;
+const feats=()=>({area:+$("#ftArea").value,rooms:+$("#ftRooms").value,year:+$("#ftYear").value,hood});
+const priceOf=f=>Math.round((130+2.6*f.area+22*f.rooms+0.9*(f.year-1970))*HOOD_MULT[f.hood]);
+// vende rapido: imovel novo, menor, com 2 ou 3 quartos, em bairro central
+const signalsOf=f=>[f.year>=2000,f.area<=90,f.rooms===2||f.rooms===3,f.hood===1].filter(Boolean).length;
+function drawFeats(){const f=feats(),p=priceOf(f);
+  $("#vArea").textContent=T(S.areaTick,{v:f.area});$("#vRooms").textContent=f.rooms;$("#vYear").textContent=f.year;
+  $("#priceTxt").textContent=T(S.priceLabel,{v:p});
+  const t=Math.max(0,Math.min(1,(p-200)/700));
+  $("#priceKnob").setAttribute("transform",`translate(${t*240-130} 0)`);
+  const n=signalsOf(f),yes=n>=3;
+  [["#binA",yes],["#binB",!yes]].forEach(([sel,on])=>{const g=$(sel);
+    g.querySelector("rect").setAttribute("stroke-width",on?6:3);g.style.opacity=on?1:.3});
+  $("#sellOut").innerHTML=T(S.sellOut,{n,answer:`<strong>${yes?S.sellYes:S.sellNo}</strong>`})}
+["#ftArea","#ftRooms","#ftYear"].forEach(sel=>$(sel).oninput=drawFeats);
+$$("#ftHood button").forEach((b,i)=>b.onclick=()=>{hood=i;$$("#ftHood button").forEach((x,j)=>x.setAttribute("aria-pressed",i===j));drawFeats()});
+drawFeats();
 const QZ=S.quiz;
 let qdone=0,qright=0;
 QZ.forEach(([t,a])=>{const row=document.createElement("div");row.className="row";row.innerHTML=`<span>${t}</span><button class="ghost small">${S.quizC}</button><button class="ghost small">${S.quizR}</button>`;
@@ -59,22 +75,37 @@ QZ.forEach(([t,a])=>{const row=document.createElement("div");row.className="row"
   b1.onclick=()=>pick("C");b2.onclick=()=>pick("R");$("#quiz").appendChild(row)});
 
 // 5: regression
-const apts=[[45,310],[52,360],[60,395],[68,440],[75,455],[80,520],[95,560],[110,640],[120,700],[135,760],[150,830],[170,930]].map(([a,p])=>({a,p:p+Math.round(gauss()*35)}));
-const R={W:700,H:400,pad:56,a0:30,a1:190,p0:100,p1:1100};
-const rx=a=>R.pad+(a-R.a0)/(R.a1-R.a0)*(R.W-2*R.pad), ry=p=>R.H-R.pad-(p-R.p0)/(R.p1-R.p0)*(R.H-2*R.pad);
+const apts=[[45,310],[48,340],[52,360],[56,385],[60,395],[64,455],[68,440],[72,425],[75,455],[78,540],[80,520],[88,505],
+  [95,560],[100,640],[105,590],[110,640],[115,720],[120,700],[128,700],[135,760],[142,795],[150,830],[160,880],[170,930]]
+  .map(([a,p])=>({a,p:p+Math.round(gauss()*35)}));
+// padL sobra para o rotulo do eixo y; padB, para o do eixo x
+const R={W:700,H:400,pad:56,padL:96,padB:70,a0:30,a1:190,p0:100,p1:1100};
+const rx=a=>R.padL+(a-R.a0)/(R.a1-R.a0)*(R.W-R.pad-R.padL), ry=p=>R.H-R.padB-(p-R.p0)/(R.p1-R.p0)*(R.H-R.padB-R.pad);
 const dec=n=>S.decimalComma?n.replace(".",","):n;
 function drawReg(){const a=+$("#slA").value,b=+$("#slB").value,svg=$("#svgReg");svg.innerHTML="";
-  el("line",{x1:R.pad,y1:R.H-R.pad,x2:R.W-R.pad,y2:R.H-R.pad,stroke:C.line,"stroke-width":2},svg);el("line",{x1:R.pad,y1:R.pad,x2:R.pad,y2:R.H-R.pad,stroke:C.line,"stroke-width":2},svg);
-  [50,100,150].forEach(v=>el("text",{x:rx(v),y:R.H-R.pad+20,"font-size":12,"text-anchor":"middle",fill:"#4A5472"},svg).textContent=T(S.areaTick,{v}));
-  [300,600,900].forEach(v=>el("text",{x:R.pad-8,y:ry(v)+4,"font-size":12,"text-anchor":"end",fill:"#4A5472"},svg).textContent=T(S.priceTick,{v}));
+  // recorta a area do grafico: com a e b livres a reta pode sair muito longe
+  const clip=el("clipPath",{id:"regClip"},svg);
+  el("rect",{x:R.padL,y:R.pad,width:R.W-R.pad-R.padL,height:R.H-R.padB-R.pad},clip);
+  el("line",{x1:R.padL,y1:R.H-R.padB,x2:R.W-R.pad,y2:R.H-R.padB,stroke:C.line,"stroke-width":2},svg);el("line",{x1:R.padL,y1:R.pad,x2:R.padL,y2:R.H-R.padB,stroke:C.line,"stroke-width":2},svg);
+  [50,100,150].forEach(v=>el("text",{x:rx(v),y:R.H-R.padB+20,"font-size":12,"text-anchor":"middle",fill:"#4A5472"},svg).textContent=T(S.areaTick,{v}));
+  [300,600,900].forEach(v=>el("text",{x:R.padL-8,y:ry(v)+4,"font-size":12,"text-anchor":"end",fill:"#4A5472"},svg).textContent=T(S.priceTick,{v}));
+  el("text",{x:(R.padL+R.W-R.pad)/2,y:R.H-16,"font-size":13,"text-anchor":"middle",fill:"#4A5472"},svg).textContent=S.axArea;
+  el("text",{x:22,y:(R.pad+R.H-R.padB)/2,"font-size":13,"text-anchor":"middle",fill:"#4A5472",transform:`rotate(-90 22 ${(R.pad+R.H-R.padB)/2})`},svg).textContent=S.axPrice;
   let err=0;apts.forEach(d=>{const pred=a*d.a+b;err+=Math.abs(pred-d.p);const y1=ry(Math.max(R.p0,Math.min(R.p1,pred)));el("line",{x1:rx(d.a),y1:ry(d.p),x2:rx(d.a),y2:y1,stroke:"#D63B3B","stroke-width":3,"stroke-opacity":.55},svg)});
-  el("line",{x1:rx(R.a0),y1:ry(a*R.a0+b),x2:rx(R.a1),y2:ry(a*R.a1+b),stroke:"#7B61FF","stroke-width":4,"stroke-linecap":"round"},svg);
-  apts.forEach(d=>el("circle",{cx:rx(d.a),cy:ry(d.p),r:8,fill:C.ink,stroke:"#fff","stroke-width":2},svg));
+  el("line",{x1:rx(R.a0),y1:ry(a*R.a0+b),x2:rx(R.a1),y2:ry(a*R.a1+b),stroke:"#7B61FF","stroke-width":4,"stroke-linecap":"round","clip-path":"url(#regClip)"},svg);
+  apts.forEach(d=>el("circle",{cx:rx(d.a),cy:ry(d.p),r:7,fill:C.ink,stroke:"#fff","stroke-width":2},svg));
   $("#vA").textContent=dec(a.toFixed(1));$("#vB").textContent=b;$("#errV").textContent=T(S.errValue,{v:fmt(Math.round(err))});
-  el("text",{x:R.W-R.pad,y:R.pad-10,"font-size":13,"text-anchor":"end",fill:"#7B61FF"},svg).textContent=T(S.regFormula,{a:dec(a.toFixed(1)),sign:b<0?"−":"+",b:Math.abs(b)})}
+  el("text",{x:R.W-R.pad,y:R.pad-14,"font-size":13,"text-anchor":"end",fill:"#7B61FF"},svg).textContent=T(S.regFormula,{a:dec(a.toFixed(1)),sign:b<0?"−":"+",b:Math.abs(b)})}
 $("#slA").oninput=drawReg;$("#slB").oninput=drawReg;drawReg();
-$("#fitBtn").onclick=()=>{const n=apts.length,mx=apts.reduce((s,d)=>s+d.a,0)/n,my=apts.reduce((s,d)=>s+d.p,0)/n;let num=0,den=0;apts.forEach(d=>{num+=(d.a-mx)*(d.p-my);den+=(d.a-mx)**2});const A=num/den,B=my-A*mx;
-  const a0=+$("#slA").value,b0=+$("#slB").value;let t=0;const step=()=>{t+=0.03;const e=1-Math.pow(1-Math.min(t,1),3);$("#slA").value=(a0+(A-a0)*e).toFixed(2);$("#slB").value=Math.round(b0+(B-b0)*e);drawReg();if(t<1)requestAnimationFrame(step)};step()};
+// a reta passa do ponto e volta algumas vezes antes de assentar, como uma busca
+const settle=t=>1-Math.exp(-4.2*t)*Math.cos(7.5*t);
+$("#fitBtn").onclick=()=>{const btn=$("#fitBtn");if(btn.disabled)return;btn.disabled=true;
+  const n=apts.length,mx=apts.reduce((s,d)=>s+d.a,0)/n,my=apts.reduce((s,d)=>s+d.p,0)/n;let num=0,den=0;apts.forEach(d=>{num+=(d.a-mx)*(d.p-my);den+=(d.a-mx)**2});const A=num/den,B=my-A*mx;
+  const a0=+$("#slA").value,b0=+$("#slB").value,DUR=1600,t0=performance.now();
+  const step=now=>{const t=Math.min((now-t0)/DUR,1),e=t>=1?1:settle(t);
+    $("#slA").value=(a0+(A-a0)*e).toFixed(2);$("#slB").value=Math.round(b0+(B-b0)*e);drawReg();
+    if(t<1)requestAnimationFrame(step);else btn.disabled=false};
+  requestAnimationFrame(step)};
 
 // 6: kNN playground
 let novo=null;const K6={W:700,H:420,pad:48};
