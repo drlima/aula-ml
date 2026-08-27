@@ -318,14 +318,16 @@ base64.b64encode(buf.getvalue()).decode()           # hand the figure back as te
   </div></details>
 
   <h3 style="margin-top:26px">b) A decision tree</h3>
-  <p style="font-size:16px;color:var(--ink-2)">This is the model that <strong>boils the examples down to readable rules</strong> &mdash; the third question left open in block 9. Read it top to bottom: every box is one question about one measurement.</p>
+  <p style="font-size:16px;color:var(--ink-2)">This is the model that <strong>boils the examples down to readable rules</strong> &mdash; the third question left open in block 9. Read it top to bottom: every box is one question about one measurement, and its color tells you which answer wins inside it. Turn the depth up and watch the model trade one coarse rule for several fine ones.</p>
+  <div class="ctrls"><label>depth (how many questions in a row) <input type="range" id="slDepth" min="1" max="4" step="1" value="3"> <span class="val" id="vDepth">3</span></label></div>
   <div class="fig" id="figTree"><img id="imgTree" alt="Decision tree trained on Iris"></div>
-</div>
-</div>
-<script type="text/plain" id="codeTree">import matplotlib
+  <details class="code"><summary>The code that drew this figure</summary><div class="in">
+  <p class="tie">It is the same <code>fit</code> as always &mdash; we only swapped <code>KNeighborsClassifier</code> for <code>DecisionTreeClassifier</code>. It is literally the homework sitting in the Reveal below.</p>
+  <pre><code class="py" id="codeTree">import matplotlib
 matplotlib.use("Agg")
 import io, base64
 import matplotlib.pyplot as plt
+from matplotlib.colors import to_rgba
 from sklearn.datasets import load_iris
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 
@@ -333,16 +335,30 @@ iris = load_iris()
 names = ["sepal length (cm)", "sepal width (cm)",
          "petal length (cm)", "petal width (cm)"]
 
-tree = DecisionTreeClassifier(max_depth=3, random_state=0)
-tree.fit(iris.data, iris.target)
+tree = DecisionTreeClassifier(max_depth=d, random_state=0)   # d comes from the slider
+tree.fit(iris.data, iris.target)            # the same fit as the earlier blocks
 
-fig, ax = plt.subplots(figsize=(11.5, 6.2))
-plot_tree(tree, feature_names=names, class_names=list(iris.target_names),
-          filled=True, rounded=True, impurity=False, fontsize=9, ax=ax)
+fig, ax = plt.subplots(figsize=(min(4 + 2.6 * d, 13), 2.2 + 1.35 * d))
+drawn = plot_tree(tree, feature_names=names, class_names=list(iris.target_names),
+                  filled=True, rounded=True, impurity=False,
+                  fontsize=max(7, 12 - d), ax=ax)
+# plot_tree also hands back the "True"/"False" arrow labels, which are not boxes
+boxes = [c for c in drawn if c.get_bbox_patch() is not None]
+
+# paint each box in the page colors: the purer the box, the stronger the color
+colors = ["#FF6B57", "#1BA39C", "#7B61FF"]
+for box, counts in zip(boxes, tree.tree_.value):
+    winner = counts[0].argmax()                          # which class wins in this box
+    purity = (counts[0].max() / counts[0].sum() - 1 / 3) * 1.5   # 0 mixed, 1 pure
+    box.get_bbox_patch().set_facecolor(to_rgba(colors[winner], 0.12 + 0.8 * purity))
+    box.get_bbox_patch().set_edgecolor("#17203A")
 
 buf = io.BytesIO()
 fig.savefig(buf, format="png", dpi=120, bbox_inches="tight")
-base64.b64encode(buf.getvalue()).decode()</script>
+base64.b64encode(buf.getvalue()).decode()</code></pre>
+  </div></details>
+</div>
+</div>
 
 <details class="reveal"><summary>Reveal</summary><div class="in">
 <p>Change <code>n_neighbors=1</code> to 7 and run it again. Swap <code>load_iris</code> for <code>load_wine</code> (wines, 13 chemical measurements) or <code>load_breast_cancer</code> (test results, benign/malignant). The code does not change; only the table changes. That is the promise of scikit-learn, and the reason ML is useful in so many fields.</p>

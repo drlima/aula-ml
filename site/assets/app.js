@@ -229,9 +229,10 @@ async function drawFig(boxId,imgId,code,globals){const box=$("#"+boxId);box.clas
     figFail(boxId,S.vizFail);
     $("#pyStatus").textContent=S.vizFailStatus;$("#vizBtn").disabled=false;return false}}
 const drawKnnFig=()=>drawFig("figKnn","imgKnn",$("#codeKnn").textContent,{k:+$("#slKviz").value});
-const drawTreeFig=()=>drawFig("figTree","imgTree",$("#codeTree").textContent,{});
+const drawTreeFig=()=>drawFig("figTree","imgTree",$("#codeTree").textContent,{d:+$("#slDepth").value});
 $("#vizBtn").onclick=async()=>{$("#vizBtn").disabled=true;$("#vizWrap").hidden=false;$("#vizNote").textContent=S.vizLoading;
   const ok=await drawKnnFig();if(ok)await drawTreeFig();
   if(ok)$("#vizNote").textContent=S.vizDone};
-let kTimer=null;
+let kTimer=null,dTimer=null;
 $("#slKviz").oninput=e=>{$("#vKviz").textContent=e.target.value;clearTimeout(kTimer);kTimer=setTimeout(drawKnnFig,260)};
+$("#slDepth").oninput=e=>{$("#vDepth").textContent=e.target.value;clearTimeout(dTimer);dTimer=setTimeout(drawTreeFig,260)};
