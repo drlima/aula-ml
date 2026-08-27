@@ -7,9 +7,16 @@ bloco, o *punch* que a página revela e o que fazer ao vivo enquanto a turma pen
 comenta duas ou três respostas, e só então diz "agora abram o Revelar". Os alunos que abrem
 antes estragam a própria surpresa, não a dos outros.
 
-**Antes de começar (5 min antes):** peça que todos abram o link. O primeiro carregamento baixa
-o Python no navegador. Enquanto carrega, peça que digitem no chat de onde são e o que fazem.
-Você vai usar isso nos exemplos.
+**Antes de começar (5 min antes):** peça que todos abram o link e, já no bloco 8, cliquem
+em **"Rodar Python"** e em **"Carregar exemplos visuais"**. São dois downloads separados
+(~20 MB de Python + scikit-learn, mais ~10 MB de matplotlib) e os dois precisam de
+internet. Se a turma esperar chegar no bloco 8 para clicar, você perde uns minutos de aula
+olhando barra de progresso. Enquanto carrega, peça que digitem no chat de onde são e o que
+fazem: você vai usar isso nos exemplos.
+
+**A aula existe em dois idiomas.** O alternador **PT · EN** fica no canto direito da barra
+de navegação. Se houver alguém que não lê português, mande o link direto:
+https://drlima.github.io/aula-ml/en/
 
 | Bloco da página | Tempo | O que acontece ao vivo |
 |---|---|---|
@@ -20,8 +27,9 @@ Você vai usar isso nos exemplos.
 | 5. Modelo = fórmula | 15 min | **O centro da aula.** Deixe-os mover a e b tentando reduzir as barras vermelhas por 2 min antes do botão "deixar o computador aprender". Punch: modelo = fórmula com espaços em branco; aprender = preencher. Nomeie parâmetro, erro, treinamento. |
 | 6. Vizinhos | 12 min | Tocam no gráfico para colocar a fruta nova. Pergunta-chave: "como chutam sem fórmula?". Depois k e o mapa de decisão com k = 1 (ilhas) vs k = 15. |
 | 7. Armadilha | 15 min | Com 0% escondido: "100%, podemos entregar?". Deixe a euforia durar. Punch: o vizinho mais próximo é ele mesmo. Slider de escondidas, depois k. Nomeie generalização, overfitting, hiperparâmetro. |
-| 8. Python | 10 min | Clique em "Rodar Python" cedo (download). Mostre que X, y, fit, score são as mesmas palavras dos blocos anteriores. Troque k e o dataset ao vivo. |
-| 9. Mapa | 5 min | Tabela-resumo. As três perguntas abertas são o programa das próximas aulas. |
+| 8. Python | 12 min | Clique em "Rodar Python" cedo (download). Mostre que X, y, fit, score são as mesmas palavras dos blocos anteriores. Troque k e o dataset ao vivo. Depois desça para os **exemplos visuais**: o mapa de decisão do Iris com o slider de k (é o mesmo mapa do bloco 6, agora feito por scikit-learn de verdade) e a **árvore de decisão**, que responde ao vivo a terceira pergunta aberta do bloco 9. |
+| 9. Mapa | 5 min | Tabela-resumo. As três perguntas abertas são o programa das próximas aulas — mas a terceira você já mostrou: é a árvore do bloco 8. |
+| 10. Para continuar | 3 min | Referências com uma linha dizendo por que ler cada uma. Aponte o ISL (gratuito, capítulos 2 e 3) para quem quer profundidade e o Crash Course do Google para quem quer prática. |
 
 ## Variabilidade de exemplos (por onde passam)
 
@@ -30,10 +38,13 @@ Você vai usar isso nos exemplos.
 - Churn de operadora de celular, fraude, notícias, segmentação (bloco 3)
 - Imóveis, clima, cheques, idade por foto, tumor, internação hospitalar (bloco 4)
 - Frutas na feira (blocos 3, 6 e 7), apartamentos (bloco 5), flores/vinhos/exames em Python (bloco 8)
+- Iris com pétalas e a árvore de decisão nos exemplos visuais (bloco 8)
 
 ## Planos B
 
 - **Turma silenciosa:** substitua perguntas abertas por votação binária no chat ("1 ou 2").
 - **Site não carrega para alguém:** compartilhe sua tela; a aula funciona em modo demonstração. O aluno abre o link depois.
+- **Rede bloqueia o CDN:** os blocos 1 a 7 e o 9 e 10 funcionam sem internet nenhuma depois que a página carregou. Só o bloco 8 precisa da rede (o Python vem do jsdelivr). Se ele falhar, a página mostra a mensagem de erro no lugar da figura e você pode seguir sem ele — mas teste a rede da sala antes.
+- **Sobrou tempo:** abra os painéis **"O mesmo, em Python"** dos blocos 5, 6 e 7 e leia o código em voz alta, amarrando cada slider ao parâmetro correspondente. São 10 linhas cada um.
 - **Sobrou tempo:** o desafio de casa (`DecisionTreeClassifier`) vira demonstração ao vivo no bloco 8.
 - **Faltou tempo:** corte o bloco 8 (Python vira tarefa de casa). Blocos 5 e 7 são inegociáveis.

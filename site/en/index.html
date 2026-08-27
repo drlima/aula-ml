@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Machine Learning from scratch — an interactive class</title>
+<link rel="alternate" hreflang="pt-BR" href="../">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="alternate" hreflang="x-default" href="../">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<nav class="map" aria-label="Class map"><div class="wrap">
+<a href="#s1">1 Rules</a><a href="#s2">2 Learning</a><a href="#s3">3 Answer key</a><a href="#s4">4 Label or number</a><a href="#s5">5 Model = formula</a><a href="#s6">6 Neighbors</a><a href="#s7">7 The trap</a><a href="#s8">8 Python</a><a href="#s9">9 The map</a><a href="#s10">10 Further reading</a><span class="lang"><a href="../" hreflang="pt-BR">PT</a> · <strong>EN</strong></span>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+<div class="eyebrow">Class 1 · live</div>
+<h1>Machine Learning<br>from scratch</h1>
+<p class="lead">Ninety minutes to understand what a computer actually does when it "learns". No heavy math, nothing to install. You will <mark>poke, guess and get it wrong</mark> before you see the answer.</p>
+<div class="note">Every block opens with a question. Think about it (or vote in the chat) <em>before</em> you open the <strong>Reveal</strong> panel. Getting it wrong first is the whole point.</div>
+</div></header>
+
+<section class="block" id="s1"><div class="wrap">
+<div class="eyebrow">Block 1</div>
+<h2>The problem that will not fit into rules</h2>
+<p>Three messages just landed in your inbox. Two are real, one is a scam.</p>
+<div class="mail"><b>A</b> CONGRATULATIONS!!! You have won a FREE iPhone, click here</div>
+<div class="mail"><b>B</b> Hi, your card statement is ready, it is available at the link</div>
+<div class="mail"><b>C</b> Free entry to Saturday's show, want to come? Let me know</div>
+<div class="q">Write a one-line rule that separates spam from not-spam.</div>
+<div class="widget">
+  <input type="text" id="rule" placeholder='e.g. contains the word "free"'>
+  <div class="ctrls" style="margin-top:12px"><button id="ruleBtn">Test my rule</button></div>
+  <div class="out" id="ruleOut"></div>
+</div>
+<details class="reveal"><summary>Reveal</summary><div class="in">
+<p>Every rule has a counter-example sitting right there. "Contains free"? Message C is from your friend. "Has a link"? B is from your bank. "All caps"? What about that urgent email from work?</p>
+<p>You just did what engineers did for thirty years: <strong>write the rules by hand</strong>. And you found out why it fails: the world has more cases than any list can cover.</p>
+<p><mark>Machine learning flips that logic around.</mark> Instead of writing the rule, we hand over examples and let the computer find the rule on its own. The rest of this class turns that sentence into something precise.</p>
+</div></details>
+</div></section>
+
+<section class="block" id="s2"><div class="wrap">
+<div class="eyebrow">Block 2</div>
+<h2>What does "learning" actually mean?</h2>
+<div class="q">Which of these systems learn? Tap every one you think does.</div>
+<div class="widget">
+<div class="cards" id="learnCards">
+  <div class="card" data-ok="0">🌡️ Thermostat<small>turns on the heater below 65 °F</small></div>
+  <div class="card" data-ok="0">📖 Spell checker<small>with a fixed dictionary</small></div>
+  <div class="card" data-ok="1">🎧 Music app<small>suggesting the next track</small></div>
+  <div class="card" data-ok="0">🧮 Calculator<small>four operations</small></div>
+  <div class="card" data-ok="1">📱 Phone camera<small>recognizing its owner's face</small></div>
+</div>
+<div class="ctrls"><button id="learnBtn">Check</button></div>
+<div class="out" id="learnOut"></div>
+</div>
+<details class="reveal"><summary>Reveal</summary><div class="in">
+<p>Only the <strong>music app</strong> and the <strong>camera</strong> learn. The test is a precise one:</p>
+<p><mark>A system learns when its performance at a task improves with experience.</mark> <span class="tag">Tom Mitchell, 1997</span></p>
+<p>Today's thermostat is identical to yesterday's, no matter how many winters go by. Today's music app suggests different tracks than it did a month ago because it <em>saw more data</em>.</p>
+<table><tr><th>Ingredient</th><th>Music app</th><th>Spam filter</th></tr>
+<tr><td><strong>Task</strong> (what it does)</td><td>suggest the next track</td><td>separate spam</td></tr>
+<tr><td><strong>Experience</strong> (what it sees)</td><td>tracks played and skipped</td><td>emails users already flagged</td></tr>
+<tr><td><strong>Performance</strong> (how we measure)</td><td>how many suggestions you listened to all the way</td><td>% of emails filed correctly</td></tr></table>
+<p>Any time you get lost in this class, the rescue question is: <em>"is this the task, the experience or the performance?"</em></p>
+</div></details>
+</div></section>
+
+<section class="block" id="s3"><div class="wrap wide">
+<div class="eyebrow">Block 3</div>
+<h2>Is there an answer key or not?</h2>
+<p>A farmers' market. Someone weighed and tasted 60 pieces of fruit and wrote down two things about each: <strong>weight</strong> and <strong>sweetness</strong>. Every dot below is one piece of fruit.</p>
+<div class="q">Looking only at the grey dots, what can you figure out? And what changes when we switch the labels on?</div>
+<div class="widget">
+<div class="ctrls"><label><input type="checkbox" id="lblToggle"> Show labels (which fruit it is)</label></div>
+<svg id="svgLabels" viewBox="0 0 640 380" width="100%" aria-label="Fruit chart"></svg>
+<div class="legend" id="lblLegend" style="visibility:hidden"><span><i class="dot" style="background:var(--coral)"></i>orange</span><span><i class="dot" style="background:var(--teal)"></i>apple</span></div>
+</div>
+<details class="reveal"><summary>Reveal</summary><div class="in">
+<p><strong>Without labels</strong> you can still see something: the dots fall into two clumps. You can say "there seem to be two kinds of fruit here", but you cannot say <em>which</em>. That is <strong>unsupervised learning</strong>: finding hidden structure with no answer key.</p>
+<p><strong>With labels</strong>, the problem changes character. Now we can learn the relationship between the measurements and the name, and <em>predict</em> the label of a new piece of fruit. That is <strong>supervised learning</strong>: the data comes with the right answer attached.</p>
+<table><tr><th></th><th>Answer key?</th><th>Task</th><th>Examples</th></tr>
+<tr><td><strong>Supervised</strong></td><td>yes</td><td>learn <code>input → answer</code></td><td>spam, diagnosis, price forecasting, speech recognition</td></tr>
+<tr><td><strong>Unsupervised</strong></td><td>no</td><td>find groups and patterns</td><td>customer segments, unusual fraud, grouping news stories</td></tr></table>
+<p>There is a third family, <strong>reinforcement learning</strong> (learning by trial and reward, as in games and robotics). This class stays in supervised learning, where most everyday applications live.</p>
+</div></details>
+</div></section>
+
+<section class="block" id="s4"><div class="wrap">
+<div class="eyebrow">Block 4</div>
+<h2>Is the answer a label or a number?</h2>
+<p>The same table of apartments (floor area, bedrooms, neighborhood, year). Two different questions about it:</p>
+<div class="two">
+<div class="widget" style="margin:0"><h3>(a) What is it worth?</h3>
+<svg viewBox="0 0 280 120" width="100%"><defs><linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#1BA39C"/><stop offset="1" stop-color="#7B61FF"/></linearGradient></defs>
+<rect x="20" y="52" width="240" height="14" rx="7" fill="url(#g1)"/><g id="priceKnob"><circle cx="150" cy="59" r="14" fill="#fff" stroke="#17203A" stroke-width="3"/></g>
+<text x="20" y="40" font-size="11" fill="#4A5472">$200k</text><text x="200" y="40" font-size="11" fill="#4A5472">$900k</text>
+<text id="priceTxt" x="140" y="100" font-size="16" text-anchor="middle">$480k</text></svg>
+<input type="range" id="priceRange" min="200" max="900" value="480" style="width:100%">
+<p style="font-size:15px;color:var(--ink-2);margin:6px 0 0">The answer is a <strong>number on a continuous ruler</strong>.</p></div>
+<div class="widget" style="margin:0"><h3>(b) Will it sell in 30 days?</h3>
+<svg viewBox="0 0 280 120" width="100%">
+<g id="binA" style="cursor:pointer"><rect x="30" y="30" width="95" height="70" rx="12" fill="#EAF8F0" stroke="#1E9E5A" stroke-width="3"/><text x="77" y="72" font-size="18" text-anchor="middle" fill="#1E9E5A">yes</text></g>
+<g id="binB" style="cursor:pointer"><rect x="155" y="30" width="95" height="70" rx="12" fill="#FDEDED" stroke="#D63B3B" stroke-width="3"/><text x="202" y="72" font-size="18" text-anchor="middle" fill="#D63B3B">no</text></g></svg>
+<p style="font-size:15px;color:var(--ink-2);margin:6px 0 0">The answer lands in <strong>one of a few boxes</strong>. Tap one.</p></div>
+</div>
+<div class="q" style="margin-top:26px">Are these the same kind of problem?</div>
+<details class="reveal"><summary>Reveal</summary><div class="in">
+<p>The <strong>input</strong> is identical. What changes is the <strong>type of output</strong>:</p>
+<p>(a) a continuous number → <mark>regression</mark> · (b) one category out of a few → <mark>classification</mark></p>
+<p>The distinction lives entirely in the output. It is not that "regression is more mathematical", nor that "regression takes numbers as input". There is only one question: <em>is the answer a label or a quantity?</em></p>
+</div></details>
+<h3 style="margin-top:28px">Quick-fire round</h3>
+<div class="widget"><div class="quiz" id="quiz"></div><div class="out" id="quizOut"></div></div>
+</div></section>
+
+<section class="block" id="s5"><div class="wrap wide">
+<div class="eyebrow">Block 5</div>
+<h2>A model is a formula with blanks in it</h2>
+<p>Let us stay with regression for a moment, because it shows the most important idea of the class stripped bare. Below, 12 apartments from the same neighborhood: <strong>floor area</strong> on the horizontal axis, <strong>price</strong> on the vertical one.</p>
+<div class="q">Draw a line that "explains" these points. Which two numbers do you have to choose?</div>
+<div class="widget">
+<div class="formula">price = <span class="a">a</span> × area + <span class="b">b</span></div>
+<div class="ctrls">
+<label><span style="color:var(--marker);background:var(--ink);padding:0 6px;border-radius:4px">a</span> slope <input type="range" id="slA" min="0" max="16" step="0.1" value="3"> <span class="val" id="vA">3.0</span></label>
+<label><span style="color:#8BE9B4;background:var(--ink);padding:0 6px;border-radius:4px">b</span> starting point <input type="range" id="slB" min="-200" max="400" step="5" value="200"> <span class="val" id="vB">200</span></label>
+<button id="fitBtn">Let the computer learn</button>
+</div>
+<svg id="svgReg" viewBox="0 0 700 400" width="100%" aria-label="Area versus price chart"></svg>
+<div class="out">Total error (sum of the red bars): <span class="val" id="errV">—</span></div>
+</div>
+<details class="code"><summary>The same thing, in Python</summary><div class="in">
+<p class="tie">The two sliders you moved are these two numbers. There is no button here: <code>fit</code> runs the same search that "let the computer learn" ran.</p>
+<pre><code class="py">from sklearn.linear_model import LinearRegression
+
+X = [[45], [52], [60], [68]]   # the floor area of each apartment
+y = [310, 360, 395, 440]       # the price of each one
+
+model = LinearRegression()
+model.fit(X, y)                # searches for the best a and the best b
+
+print(model.coef_[0])          # the "a" slider: the slope
+print(model.intercept_)        # the "b" slider: the starting point</code></pre>
+</div></details>
+<details class="reveal"><summary>Reveal</summary><div class="in">
+<p>You picked two numbers, <strong>a</strong> and <strong>b</strong>. While you moved them around you were trying to shrink the red bars: the gap between what the line <em>predicts</em> and what actually happened. That is exactly what a computer does when it "learns", only much faster and for thousands of numbers at once.</p>
+<p><mark>A model is a formula with blanks in it. Learning is filling those blanks with the numbers that make the error smallest.</mark></p>
+<p>This takes apart a common confusion: the computer does not "understand" apartments. It tunes numbers in a formula until the formula imitates the examples. The more examples, the better the fit. When the "let the computer learn" button moved the sliders by itself, that is all it was doing: searching for the best <strong>a</strong> and <strong>b</strong>.</p>
+<p>The technical names, so you recognize them later: the blanks are the <strong>parameters</strong>; the red bars added up are the <strong>loss function</strong>; the automatic tuning is <strong>training</strong>.</p>
+</div></details>
+</div></section>
+
+<section class="block" id="s6"><div class="wrap wide">
+<div class="eyebrow">Block 6</div>
+<h2>A model with no formula: nearest neighbors</h2>
+<p>Back to the fruit, labels switched on this time. A new piece of fruit arrives that nobody has tasted. All we know is its weight and its sweetness.</p>
+<div class="q">You know no formula at all. How do you guess apple or orange? Tap the chart to drop the new fruit in.</div>
+<div class="widget">
+<div class="ctrls">
+<label>k (how many neighbors to ask) <input type="range" id="slK" min="1" max="25" step="2" value="1"> <span class="val" id="vK">1</span></label>
+<label><input type="checkbox" id="mapToggle"> Paint the decision map</label>
+<button class="ghost small" id="shuffleBtn">New fruit</button>
+</div>
+<svg id="svgKnn" viewBox="0 0 700 420" width="100%" style="cursor:crosshair" aria-label="Nearest neighbors playground"></svg>
+<div class="legend"><span><i class="dot" style="background:var(--coral)"></i>orange</span><span><i class="dot" style="background:var(--teal)"></i>apple</span><span><i class="dot" style="background:#fff;border:2px solid var(--ink)"></i>new fruit</span></div>
+<div class="out" id="knnOut">Tap the chart.</div>
+</div>
+<details class="code"><summary>The same thing, in Python</summary><div class="in">
+<p class="tie">The fruit you dropped on the chart is the <code>new_fruit</code> line, and the k slider is <code>n_neighbors</code>.</p>
+<pre><code class="py">from sklearn.neighbors import KNeighborsClassifier
+
+X = [[150, 0.62], [205, 0.40], [148, 0.66]]   # weight and sweetness
+y = ["apple", "orange", "apple"]              # the label of each one
+
+model = KNeighborsClassifier(n_neighbors=3)   # the k from the slider
+model.fit(X, y)                               # here, learning = storing
+
+new_fruit = [[170, 0.55]]                     # the one you put on the chart
+print(model.predict(new_fruit))               # the label that won the vote</code></pre>
+</div></details>
+<details class="reveal"><summary>Reveal</summary><div class="in">
+<p>You probably thought: "I look at the similar fruit around it". That has a name: <strong>k nearest neighbors</strong> (k-NN). To classify a new piece of fruit: measure its distance to every known one, take the <strong>k</strong> closest, and let the label win <strong>by vote</strong>.</p>
+<p>Notice there is no formula with blanks here. The model simply <em>stores</em> the examples. And it is still ML: with more tasted fruit, the vote gets more reliable. So "model" is a broad word: sometimes it is a fitted formula, sometimes it is an organized memory. What they all share is that they <mark>turn past examples into predictions about new cases</mark>.</p>
+<p>The decision map paints what the model would answer at <em>every</em> point of the chart. Notice how at k = 1 it is full of strange islands around isolated fruit, and how the borders smooth out as k grows. Hold on to that picture for the next block.</p>
+</div></details>
+</div></section>
+
+<section class="block" id="s7"><div class="wrap wide">
+<div class="eyebrow">Block 7</div>
+<h2>The 100% trap</h2>
+<p>Let us grade the model. We take the 60 known pieces of fruit, ask the k-NN for the label of each one, and count the hits.</p>
+<div class="q">With k = 1, what score does the model get on fruit it already knows? Can we ship that model to the market?</div>
+<div class="widget">
+<div class="ctrls">
+<label>Fruit hidden for testing <input type="range" id="slHide" min="0" max="80" step="5" value="0"> <span class="val" id="vHide">0%</span></label>
+<label>k <input type="range" id="slK2" min="1" max="25" step="2" value="1"> <span class="val" id="vK2">1</span></label>
+</div>
+<div class="two">
+<svg id="svgSplit" viewBox="0 0 340 300" width="100%" aria-label="Seen and hidden fruit"></svg>
+<svg id="svgScore" viewBox="0 0 340 300" width="100%" aria-label="Model score"></svg>
+</div>
+<div class="legend"><span><i class="dot" style="background:var(--ink)"></i>fruit the model saw (training)</span><span><i class="dot" style="background:#fff;border:2px dashed var(--ink)"></i>hidden fruit (test)</span></div>
+</div>
+<details class="code"><summary>The same thing, in Python</summary><div class="in">
+<p class="tie">The hidden-fruit slider is <code>test_size</code>, and the two bars on the chart are these two scores.</p>
+<pre><code class="py">from sklearn.model_selection import train_test_split
+
+# hide 30% of the fruit before training
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=7)
+
+model = KNeighborsClassifier(n_neighbors=1)
+model.fit(X_train, y_train)          # only ever sees the training fruit
+
+print(model.score(X_train, y_train)) # dark bar: on what it saw
+print(model.score(X_test, y_test))   # purple bar: on the hidden fruit</code></pre>
+</div></details>
+<details class="reveal"><summary>Reveal</summary><div class="in">
+<p>With k = 1 and 0% hidden, the score is <strong>100%</strong>. And it is a lie. When we ask about a fruit that is already in memory, its nearest neighbor is <em>itself</em>. The model predicted nothing: it memorized.</p>
+<p>Grading on the same data you learned from is marking an exam whose answer key the student already read. Hence the central idea of the whole field:</p>
+<p><mark>The goal of a model is not to get the examples it has seen right. It is to get right the ones it has not seen yet.</mark> That is called <strong>generalization</strong>. A model that only gets the training set right is <strong>memorizing</strong>, and the technical name is <em>overfitting</em>.</p>
+<p>The fix is honest and simple: <strong>hide part of the data</strong> before training and only look at the score there. Move the hidden-fruit slider: the training score stays high while the test score tells the truth. Then move k: with a small k the model memorizes (100% on training, lower on test); with a huge k it always answers whichever fruit is most common (both scores drop). The middle is usually best. <strong>k</strong> is a number <em>we</em> pick before training, a <strong>hyperparameter</strong>; a good share of practical ML work is turning knobs like this one and measuring.</p>
+</div></details>
+</div></section>
+
+<section class="block" id="s8"><div class="wrap">
+<div class="eyebrow">Block 8</div>
+<h2>All of it in 4 lines of Python</h2>
+<p>You have just done with a mouse what the <strong>scikit-learn</strong> library does for you. The vocabulary is the same: <code>X</code> is the table of measurements, <code>y</code> are the labels, <code>fit</code> learns, <code>predict</code> guesses, <code>score</code> grades. The Python below runs <strong>inside your browser</strong>; edit it freely.</p>
+<div class="widget">
+<textarea id="py" spellcheck="false">from sklearn.datasets import load_iris          # 150 flowers, 4 measurements, 3 species
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+
+X, y = load_iris(return_X_y=True)                  # X: measurements   y: labels
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=7)
+
+model = KNeighborsClassifier(n_neighbors=1)        # change the k here
+model.fit(X_train, y_train)                        # learning = storing the flowers it saw
+
+print("Score on the flowers it saw:", model.score(X_train, y_train))
+print("Score on the hidden flowers:", round(model.score(X_test, y_test), 3))</textarea>
+<div class="ctrls" style="margin-top:12px"><button id="runBtn">Run Python</button><span id="pyStatus" style="font-weight:400;color:var(--ink-2)">The first time, your browser downloads Python (~20 MB). It takes a few seconds.</span></div>
+<div class="console" id="pyOut"></div>
+</div>
+
+<h3 style="margin-top:34px">Two visual examples, drawn right here</h3>
+<p>The two figures below are drawn by <strong>matplotlib</strong> running in your browser, with the same <code>fit</code> and <code>predict</code> from the earlier blocks &mdash; only now over the 150 Iris flowers. They sit behind a button because they download a few more megabytes.</p>
+<div class="widget">
+<div class="ctrls"><button id="vizBtn">Load visual examples</button><span id="vizNote" style="font-weight:400;color:var(--ink-2);font-family:var(--body);font-size:16px">Downloads matplotlib, about 10&nbsp;MB more.</span></div>
+
+<div id="vizWrap" hidden>
+  <h3 style="margin-top:22px">a) The decision map from block 6, now on Iris</h3>
+  <p style="font-size:16px;color:var(--ink-2)">Same idea as the map you painted with the mouse: asking the model for its answer at <em>every</em> point of the plane. Move k and watch the islands disappear.</p>
+  <div class="ctrls"><label>k (how many neighbors to ask) <input type="range" id="slKviz" min="1" max="25" step="2" value="5"> <span class="val" id="vKviz">5</span></label></div>
+  <div class="fig" id="figKnn"><img id="imgKnn" alt="k-NN decision boundary over the Iris petals"></div>
+  <details class="code"><summary>The code that drew this figure</summary><div class="in">
+  <p class="tie">It is the same <code>fit</code> from block 6. All that changed is asking for the answer at thousands of points at once, so we can paint the background.</p>
+  <pre><code class="py" id="codeKnn">import matplotlib
+matplotlib.use("Agg")          # draw into memory, not into a window
+import io, base64
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
+from sklearn.datasets import load_iris
+from sklearn.neighbors import KNeighborsClassifier
+
+iris = load_iris()
+X = iris.data[:, 2:4]          # just 2 measurements: petal length and width
+y = iris.target                # 0 setosa, 1 versicolor, 2 virginica
+
+model = KNeighborsClassifier(n_neighbors=k)    # k comes from the slider above
+model.fit(X, y)                                # the same fit as block 6
+
+# ask the model for its answer at EVERY point of the plane: that is the map
+gx, gy = np.meshgrid(np.arange(0.5, 7.6, 0.02), np.arange(-0.2, 3.0, 0.02))
+Z = model.predict(np.c_[gx.ravel(), gy.ravel()]).reshape(gx.shape)
+
+colors = ["#FF6B57", "#1BA39C", "#7B61FF"]
+plt.rcParams.update({"font.size": 12})
+fig, ax = plt.subplots(figsize=(6.4, 4.3))
+ax.pcolormesh(gx, gy, Z, cmap=ListedColormap(colors), alpha=0.18, shading="auto")
+for i, name in enumerate(iris.target_names):
+    ax.scatter(X[y == i, 0], X[y == i, 1], c=colors[i], s=38,
+               edgecolor="white", linewidth=0.8, label=name)
+ax.set_xlabel("petal length (cm)")
+ax.set_ylabel("petal width (cm)")
+ax.legend(loc="upper left", frameon=False)
+
+buf = io.BytesIO()                                  # a file that only exists in memory
+fig.savefig(buf, format="png", dpi=140, bbox_inches="tight")
+base64.b64encode(buf.getvalue()).decode()           # hand the figure back as text</code></pre>
+  </div></details>
+
+  <h3 style="margin-top:26px">b) A decision tree</h3>
+  <p style="font-size:16px;color:var(--ink-2)">This is the model that <strong>boils the examples down to readable rules</strong> &mdash; the third question left open in block 9. Read it top to bottom: every box is one question about one measurement.</p>
+  <div class="fig" id="figTree"><img id="imgTree" alt="Decision tree trained on Iris"></div>
+</div>
+</div>
+<script type="text/plain" id="codeTree">import matplotlib
+matplotlib.use("Agg")
+import io, base64
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+
+iris = load_iris()
+names = ["sepal length (cm)", "sepal width (cm)",
+         "petal length (cm)", "petal width (cm)"]
+
+tree = DecisionTreeClassifier(max_depth=3, random_state=0)
+tree.fit(iris.data, iris.target)
+
+fig, ax = plt.subplots(figsize=(11.5, 6.2))
+plot_tree(tree, feature_names=names, class_names=list(iris.target_names),
+          filled=True, rounded=True, impurity=False, fontsize=9, ax=ax)
+
+buf = io.BytesIO()
+fig.savefig(buf, format="png", dpi=120, bbox_inches="tight")
+base64.b64encode(buf.getvalue()).decode()</script>
+
+<details class="reveal"><summary>Reveal</summary><div class="in">
+<p>Change <code>n_neighbors=1</code> to 7 and run it again. Swap <code>load_iris</code> for <code>load_wine</code> (wines, 13 chemical measurements) or <code>load_breast_cancer</code> (test results, benign/malignant). The code does not change; only the table changes. That is the promise of scikit-learn, and the reason ML is useful in so many fields.</p>
+<p><strong>Homework:</strong> swap <code>KNeighborsClassifier</code> for <code>DecisionTreeClassifier</code> (<code>from sklearn.tree import DecisionTreeClassifier</code>). Notice that <code>fit</code>, <code>predict</code> and <code>score</code> keep their names.</p>
+</div></details>
+</div></section>
+
+<section class="block" id="s9"><div class="wrap">
+<div class="eyebrow">Block 9</div>
+<h2>A map of what you did today</h2>
+<table><tr><th>The question we asked</th><th>The idea</th><th>The technical name</th></tr>
+<tr><td>How do you separate spam without writing rules?</td><td>give examples, not rules</td><td>machine learning</td></tr>
+<tr><td>What is "learning"?</td><td>improving with experience</td><td>task, experience, performance</td></tr>
+<tr><td>Do we have the answer key?</td><td>labels on or off</td><td>supervised vs unsupervised</td></tr>
+<tr><td>Is the answer a label or a number?</td><td>boxes vs a ruler</td><td>classification vs regression</td></tr>
+<tr><td>What is a model?</td><td>a formula with blanks</td><td>parameters, loss, training</td></tr>
+<tr><td>How do you guess with no formula?</td><td>look at the neighbors</td><td>k-NN</td></tr>
+<tr><td>Is 100% trustworthy?</td><td>hide part of the data</td><td>generalization, overfitting, train/test</td></tr>
+<tr><td>Which k?</td><td>turn the knob and measure</td><td>hyperparameter</td></tr></table>
+<p>Three questions stayed open, and they are the syllabus for the next classes:</p>
+<p>1. We picked the best k by looking at the test score. Isn't that cheating, just a little? → <em>cross-validation</em><br>2. How does a formula "learn" when there are dozens of measurements, not just floor area? → <em>linear and logistic regression</em><br>3. Is there a model that boils the examples down to readable rules? → <em>decision trees</em></p>
+</div></section>
+
+<section class="block" id="s10"><div class="wrap">
+<div class="eyebrow">Block 10</div>
+<h2>Where to go next</h2>
+<p>Everything here is free and open. The order below is the one I recommend for anyone who left this class wanting more.</p>
+
+<h3 class="refgroup">Books and courses</h3>
+<ul class="refs">
+<li><a href="https://www.cs.cmu.edu/~tom/mlbook.html" target="_blank" rel="noopener">Tom Mitchell, <em>Machine Learning</em> (1997)</a>
+<span class="why">The definition we used in block 2 — task, experience, performance — is the first page of this book. It has aged remarkably well because it defines the problem rather than whatever was fashionable at the time.</span></li>
+<li><a href="https://www.statlearning.com/" target="_blank" rel="noopener">An Introduction to Statistical Learning — James, Witten, Hastie and Tibshirani</a>
+<span class="why">The PDF is free on the official site. Read chapter 2 (what learning means, and why training and test are different) and chapter 3 (the line from block 5, now done rigorously).</span></li>
+<li><a href="https://developers.google.com/machine-learning/crash-course" target="_blank" rel="noopener">Google Machine Learning Crash Course</a>
+<span class="why">A free course with exercises that run in the browser. It is the shortest path between this class and writing your first model on your own.</span></li>
+</ul>
+
+<h3 class="refgroup">scikit-learn documentation</h3>
+<ul class="refs">
+<li><a href="https://scikit-learn.org/stable/modules/neighbors.html" target="_blank" rel="noopener">Nearest Neighbors</a>
+<span class="why">All of block 6, with the choices that did not fit into the class: how to measure distance, how to weight closer neighbors more, and what to do when the vote ties.</span></li>
+<li><a href="https://scikit-learn.org/stable/modules/cross_validation.html" target="_blank" rel="noopener">Cross-validation</a>
+<span class="why">The answer to the first question left open in block 9: how to choose k without cheating by peeking at the test score.</span></li>
+<li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html" target="_blank" rel="noopener">train_test_split</a>
+<span class="why">The exact function from block 7. Worth reading what the three parameters that matter do: <code>test_size</code>, <code>random_state</code> and <code>stratify</code>.</span></li>
+<li><a href="https://scikit-learn.org/stable/modules/tree.html" target="_blank" rel="noopener">Decision Trees</a>
+<span class="why">The tree drawn in block 8, and why it is the easiest model to show to people outside the field: you can read its rules out loud.</span></li>
+</ul>
+
+<h3 class="refgroup">The tools behind this page</h3>
+<ul class="refs">
+<li><a href="https://scikit-learn.org/" target="_blank" rel="noopener">scikit-learn</a>
+<span class="why">The library behind blocks 5 to 8. What you learned holds for every model in it: <code>fit</code>, <code>predict</code> and <code>score</code> never change their names.</span></li>
+<li><a href="https://pyodide.org/en/stable/" target="_blank" rel="noopener">Pyodide</a>
+<span class="why">What makes Python run inside the browser on this page, with nothing to install and no server executing any code.</span></li>
+<li><a href="https://matplotlib.org/" target="_blank" rel="noopener">matplotlib</a>
+<span class="why">What drew the two figures in block 8. It is the standard plotting library for anyone working with data in Python.</span></li>
+</ul>
+</div></section>
+
+<footer>Machine Learning from scratch · class 1 · the Python on this page runs in your browser via Pyodide.</footer>
+
+<script>
+window.STR = {
+  locale: "en-US",
+  decimalComma: false,
+
+  // block 1 — rule tester
+  ruleEmpty: "Write a rule first.",
+  ruleNoHit: "Good rule. Now picture 10,000 different emails a day: how many exceptions would it need? Open the Reveal.",
+  ruleTests: [
+    ["free", "Your rule catches message C, which is from your friend."],
+    ["link", "Your rule catches message B, which is from your bank."],
+    ["click", "What about the message from the bank that says \"click to see your statement\"?"],
+    ["caps", "What about an urgent work email typed in all caps?"],
+    ["upper", "What about an urgent work email typed in all caps?"],
+    ["!", "What about your excited friend who uses three exclamation marks?"],
+    ["iphone", "Works today. Tomorrow the scam offers a Galaxy."],
+    ["won", "What about the email from HR telling you that you won a day off?"],
+    ["win", "What about the email from HR telling you that you won a day off?"],
+    ["know", "Your friend changed numbers. The bank wrote from a new address."],
+    ["sender", "Your friend changed numbers. The bank wrote from a new address."]
+  ],
+
+  // block 2 — cards
+  learnOk: "Nailed it. Open the Reveal to see the test.",
+  learnBad: "Close. Green = you got it right, red = wrong. The test is in the Reveal.",
+
+  // fruit axes and labels (blocks 3, 6, 7)
+  axWeight: "weight (g)",
+  axSweet: "sweetness",
+  apple: "apple",
+  applePl: "apples",
+  orange: "orange",
+  orangePl: "oranges",
+
+  // block 4 — price and quiz
+  priceLabel: "${v}k",
+  quizC: "classification",
+  quizR: "regression",
+  quizAnswer: "  → it's {a}",
+  quizScore: "{right} out of {total}. ",
+  quizPerfect: "Perfect.",
+  quizHint: "Hint: the input does not matter; look only at the type of the answer.",
+  quiz: [
+    ["Predict tomorrow's temperature", "R"],
+    ["Predict whether it will rain tomorrow", "C"],
+    ["Read the handwritten digit on a check", "C"],
+    ["Estimate a person's age from a photo", "R"],
+    ["Say whether a scan shows a benign or malignant tumor", "C"],
+    ["Predict how many days a patient will stay in hospital", "R"]
+  ],
+
+  // block 5 — regression
+  areaTick: "{v} m²",
+  priceTick: "${v}k",
+  errValue: "{v}k",
+  regFormula: "price = {a} × area {sign} {b}",
+
+  // block 6 — neighbor vote
+  voteOne: "Vote with the single nearest neighbor",
+  voteMany: "Vote among the {k} nearest neighbors",
+  voteResult: "{vote}: {apples} × {oranges} → the model says {winner}.",
+
+  // block 7 — train and test
+  barTrain: "on the fruit it saw",
+  barTest: "on the hidden fruit",
+  scoreTitle: "Model score (correct answers)",
+  scoreHint: "hide some fruit to get an honest score",
+
+  // block 8 — Python in the browser
+  pyDownload: "Downloading Python…",
+  pySklearn: "Downloading scikit-learn…",
+  pyReady: "Ready. Run it as many times as you like.",
+  pyNetError: "Could not download Python. Check your connection and try again.",
+  pyCodeError: "The code raised an error (see below). Fix it and run again.",
+  vizDownload: "Downloading matplotlib…",
+  vizReady: "Ready. Move k to redraw.",
+  vizLoading: "Downloading…",
+  vizDone: "Done. Move k to redraw the first one.",
+  vizFail: "Could not draw the figure. It needs to download matplotlib from the internet — check your connection and tap <em>Load visual examples</em> again.",
+  vizFailStatus: "Download failed. Try again."
+};
+</script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

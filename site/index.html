@@ -4,138 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Machine Learning do zero — aula interativa</title>
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="en/">
+<link rel="alternate" hreflang="x-default" href="./">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<style>
-:root{
-  --paper:#F3F6FB; --paper-2:#E8EDF7; --ink:#17203A; --ink-2:#4A5472; --line:#C9D1E4;
-  --marker:#FFD84D; --coral:#FF6B57; --teal:#1BA39C; --grape:#7B61FF; --grey:#B9C0D8;
-  --ok:#1E9E5A; --bad:#D63B3B;
-  --disp:"Bricolage Grotesque",system-ui,sans-serif; --body:"Source Serif 4",Georgia,serif; --mono:"JetBrains Mono",ui-monospace,monospace;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto} *{animation:none!important;transition:none!important}}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:19px;line-height:1.55}
-h1,h2,h3{font-family:var(--disp);line-height:1.05;margin:0 0 .4em;letter-spacing:-.01em}
-h1{font-size:clamp(44px,7vw,84px);font-weight:800}
-h2{font-size:clamp(30px,4.2vw,46px);font-weight:700}
-h3{font-size:22px;font-weight:700}
-p{margin:0 0 1em}
-code{font-family:var(--mono);font-size:.86em;background:var(--paper-2);padding:.1em .35em;border-radius:4px}
-a{color:var(--grape)}
-.wrap{max-width:780px;margin:0 auto;padding:0 22px}
-.wide{max-width:980px}
-section.block{padding:84px 0 40px;border-top:1px solid var(--line)}
-.eyebrow{font-family:var(--disp);font-weight:700;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);margin-bottom:14px}
-.q{font-family:var(--disp);font-weight:700;font-size:clamp(22px,2.6vw,28px);line-height:1.25;margin:26px 0 18px;padding-left:18px;border-left:6px solid var(--marker)}
-.q::before{content:"Pergunta";display:block;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);margin-bottom:4px}
-mark{background:linear-gradient(transparent 45%,var(--marker) 45%);padding:0 .1em}
-nav.map{position:sticky;top:0;z-index:10;background:rgba(243,246,251,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-nav.map .wrap{display:flex;gap:4px;overflow-x:auto;padding:10px 22px;scrollbar-width:none}
-nav.map a{flex:0 0 auto;font-family:var(--disp);font-weight:700;font-size:13px;color:var(--ink-2);text-decoration:none;padding:6px 10px;border-radius:999px}
-nav.map a.on{color:var(--ink);background:var(--marker)}
-.hero{padding:70px 0 40px}
-.hero p.lead{font-size:23px;max-width:640px}
-.hero .note{font-size:16px;color:var(--ink-2);margin-top:20px;border:1px dashed var(--line);border-radius:12px;padding:12px 16px}
-.widget{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;margin:22px 0 28px;box-shadow:0 8px 30px rgba(23,32,58,.06)}
-.widget h3{margin-top:0}
-.widget .ctrls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;margin:10px 0 14px;font-family:var(--disp);font-size:15px;font-weight:700}
-.widget label{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-input[type=range]{accent-color:var(--grape);width:180px;max-width:100%}
-input[type=checkbox]{width:22px;height:22px;flex:0 0 auto}
-input[type=text]{font:inherit;font-size:17px;padding:10px 14px;border:2px solid var(--line);border-radius:10px;width:100%;background:var(--paper)}
-input[type=text]:focus,button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
-button{font-family:var(--disp);font-weight:700;font-size:15px;padding:10px 16px;border-radius:999px;border:2px solid var(--ink);background:var(--ink);color:#fff;cursor:pointer}
-button.ghost{background:transparent;color:var(--ink)}
-button.small{padding:6px 12px;font-size:13px}
-button:disabled{opacity:.45;cursor:default}
-.val{font-family:var(--mono);background:var(--paper-2);padding:2px 8px;border-radius:6px;min-width:3.2em;text-align:center}
-svg text{font-family:var(--disp);font-weight:700}
-.out{font-family:var(--disp);font-weight:700;font-size:17px;margin-top:10px;min-height:1.5em}
-.out.ok{color:var(--ok)}.out.bad{color:var(--bad)}
-.legend{display:flex;gap:16px;flex-wrap:wrap;font-family:var(--disp);font-size:14px;font-weight:700;color:var(--ink-2)}
-.dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-1px}
-details.reveal{margin:14px 0 8px;border-radius:14px;background:var(--paper-2);border:1px solid var(--line)}
-details.reveal summary{cursor:pointer;list-style:none;padding:14px 18px;font-family:var(--disp);font-weight:800;font-size:17px;display:flex;align-items:center;gap:10px}
-details.reveal summary::-webkit-details-marker{display:none}
-details.reveal summary::before{content:"";width:14px;height:14px;border-radius:50%;background:var(--marker);box-shadow:0 0 0 4px rgba(255,216,77,.35)}
-details.reveal[open] summary::before{background:var(--ink)}
-details.reveal .in{padding:4px 20px 18px;font-size:18px}
-details.reveal .in p:last-child{margin:0}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:8px 0 14px}
-.card{border:2px solid var(--line);border-radius:14px;padding:14px 16px;background:#fff;cursor:pointer;font-family:var(--disp);font-weight:700;font-size:16px;line-height:1.3;transition:transform .08s}
-.card:hover{transform:translateY(-2px)}
-.card.sel{border-color:var(--grape);background:#F1EEFF}
-.card.right{border-color:var(--ok);background:#EAF8F0}
-.card.wrong{border-color:var(--bad);background:#FDEDED}
-.card small{display:block;font-family:var(--body);font-weight:400;font-size:15px;color:var(--ink-2);margin-top:4px}
-.mail{border:1px solid var(--line);border-radius:12px;padding:12px 16px;background:var(--paper);margin-bottom:10px;font-size:17px}
-.mail b{font-family:var(--disp);margin-right:8px;background:var(--ink);color:#fff;border-radius:6px;padding:1px 8px;font-size:14px}
-.quiz{display:grid;gap:10px}
-.quiz .row{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:#fff}
-.quiz .row.right{border-color:var(--ok);background:#EAF8F0}.quiz .row.wrong{border-color:var(--bad);background:#FDEDED}
-.quiz .row span{font-family:var(--disp);font-weight:700;font-size:16px}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-@media(max-width:700px){.two{grid-template-columns:1fr}.quiz .row{grid-template-columns:1fr}}
-table{border-collapse:collapse;width:100%;font-size:16px;margin:10px 0 20px}
-th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
-th{font-family:var(--disp);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
-.formula{font-family:var(--mono);font-size:clamp(20px,3vw,30px);text-align:center;padding:18px;background:var(--ink);color:#fff;border-radius:14px;margin:12px 0 18px}
-.formula .a{color:var(--marker)}.formula .b{color:#8BE9B4}
-textarea{width:100%;min-height:220px;font-family:var(--mono);font-size:14px;line-height:1.5;padding:14px;border-radius:12px;border:2px solid var(--line);background:#101627;color:#E6ECFF;resize:vertical}
-.console{font-family:var(--mono);font-size:14px;white-space:pre-wrap;background:var(--paper-2);border-radius:12px;padding:14px;min-height:60px;margin-top:10px}
-@media(max-width:700px){
-  /* sliders: ocupam a sobra da linha em vez de largura fixa */
-  input[type=range]{flex:1 1 150px;width:auto;min-width:130px;height:24px}
-  /* tabelas largas rolam dentro da propria caixa em vez de serem cortadas */
-  table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
-  table tbody{display:table;width:max-content;min-width:100%}
-  /* SVG de viewBox largo: texto legivel depois da escala */
-  #svgLabels text{font-size:24px}
-  #svgReg text{font-size:25px}
-  #svgKnn text{font-size:26px}
-  /* a arvore e larga: rola na horizontal em vez de encolher ate ficar ilegivel */
-  #figTree{overflow-x:auto;justify-content:flex-start}
-  #figTree img{width:auto;max-width:none;height:320px}
-  /* com a fonte maior os rotulos do eixo y passam da borda do viewBox */
-  #svgReg{overflow:visible}
-}
-/* painel de codigo: apendice discreto, distinto do Revelar (que e o punch) */
-details.code{margin:-6px 0 26px;border:1px dashed var(--line);border-radius:12px;background:transparent}
-details.code summary{cursor:pointer;list-style:none;padding:11px 15px;font-family:var(--disp);font-weight:700;font-size:14px;color:var(--ink-2);display:flex;align-items:center;gap:9px}
-details.code summary::-webkit-details-marker{display:none}
-details.code summary::before{content:"</>";font-family:var(--mono);font-size:11px;font-weight:600;color:var(--ink-2);background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 5px}
-details.code[open] summary{color:var(--ink);border-bottom:1px dashed var(--line)}
-details.code .in{padding:13px 15px 15px}
-details.code .tie{font-size:16px;color:var(--ink-2);margin:0 0 11px}
-pre{margin:0;background:#101627;border-radius:10px;padding:14px 16px;overflow-x:auto}
-pre code.py{font-family:var(--mono);font-size:13.5px;line-height:1.65;background:none;padding:0;border-radius:0;color:#E6ECFF;display:block;white-space:pre}
-code .k{color:var(--marker)}
-code .s{color:#8BE9B4}
-code .c{color:#92A0C6;font-style:italic}
-code .n{color:var(--coral)}
-/* figuras geradas pelo matplotlib dentro do Pyodide */
-.fig{margin:12px 0 10px;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;min-height:90px;display:flex;align-items:center;justify-content:center}
-.fig img{display:block;width:100%;height:auto}
-.fig.busy{opacity:.5}
-.figmsg{padding:20px 18px;font-family:var(--disp);font-weight:700;font-size:15px;line-height:1.4;color:var(--bad);text-align:center}
-/* lista de referencias */
-.refs{margin:6px 0 30px;padding:0;list-style:none}
-.refs li{border-top:1px solid var(--line);padding:13px 0}
-.refs li:last-child{border-bottom:1px solid var(--line)}
-.refs a{font-family:var(--disp);font-weight:700;font-size:18px;text-decoration:none}
-.refs a:hover{text-decoration:underline}
-.refs .why{display:block;font-size:16px;color:var(--ink-2);margin-top:3px;line-height:1.45}
-h3.refgroup{margin:30px 0 0;font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
-footer{padding:40px 0 60px;color:var(--ink-2);font-size:15px;text-align:center}
-.tag{display:inline-block;font-family:var(--disp);font-weight:700;font-size:13px;padding:3px 10px;border-radius:999px;background:var(--paper-2);color:var(--ink-2);margin-right:6px}
-</style>
+<link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 
 <nav class="map" aria-label="Mapa da aula"><div class="wrap">
-<a href="#s1">1 Regras</a><a href="#s2">2 Aprender</a><a href="#s3">3 Gabarito</a><a href="#s4">4 Rótulo ou número</a><a href="#s5">5 Modelo = fórmula</a><a href="#s6">6 Vizinhos</a><a href="#s7">7 Armadilha</a><a href="#s8">8 Python</a><a href="#s9">9 Mapa</a><a href="#s10">10 Referências</a>
+<a href="#s1">1 Regras</a><a href="#s2">2 Aprender</a><a href="#s3">3 Gabarito</a><a href="#s4">4 Rótulo ou número</a><a href="#s5">5 Modelo = fórmula</a><a href="#s6">6 Vizinhos</a><a href="#s7">7 Armadilha</a><a href="#s8">8 Python</a><a href="#s9">9 Mapa</a><a href="#s10">10 Referências</a><span class="lang"><strong>PT</strong> · <a href="en/" hreflang="en">EN</a></span>
 </div></nav>
 
 <header class="hero"><div class="wrap">
@@ -516,154 +395,87 @@ base64.b64encode(buf.getvalue()).decode()</script>
 <footer>Machine Learning do zero · aula 1 · o Python desta página roda no seu navegador via Pyodide.</footer>
 
 <script>
-const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const NS="http://www.w3.org/2000/svg";
-const el=(t,a={},parent)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(parent)parent.appendChild(e);return e};
-const fmt=n=>n.toLocaleString("pt-BR");
-let seed=7;const rnd=()=>{seed=(seed*16807)%2147483647;return (seed-1)/2147483646};
-const gauss=()=>{let u=0,v=0;while(!u)u=rnd();while(!v)v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)};
-const C={coral:"#FF6B57",teal:"#1BA39C",ink:"#17203A",grey:"#B9C0D8",line:"#C9D1E4"};
+window.STR = {
+  locale: "pt-BR",
+  decimalComma: true,
 
-// nav highlight
-const links=$$("nav.map a");
-$$("section.block").forEach(s=>new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)links.forEach(l=>l.classList.toggle("on",l.getAttribute("href")==="#"+s.id))})},{rootMargin:"-30% 0px -60% 0px"}).observe(s));
+  // bloco 1 — testador de regras
+  ruleEmpty: "Escreva uma regra primeiro.",
+  ruleNoHit: "Boa regra. Agora imagine 10 mil e-mails diferentes por dia: quantas exceções ela precisaria? Abra o Revelar.",
+  ruleTests: [
+    ["grát", "Sua regra pega a mensagem C, que é da sua amiga."],
+    ["gratis", "Sua regra pega a mensagem C, que é da sua amiga."],
+    ["link", "Sua regra pega a mensagem B, que é do seu banco."],
+    ["clique", "E a mensagem do banco que diz \"clique para ver a fatura\"?"],
+    ["maiúsc", "E um e-mail urgente do trabalho escrito em caixa alta?"],
+    ["maiusc", "E um e-mail urgente do trabalho escrito em caixa alta?"],
+    ["!", "E a amiga animada que usa três exclamações?"],
+    ["iphone", "Funciona hoje. Amanhã o golpe oferece um Galaxy."],
+    ["ganh", "E o e-mail do RH avisando que você ganhou um dia de folga?"],
+    ["conhec", "Sua amiga trocou de número. O banco mandou de um endereço novo."],
+    ["remetente", "Sua amiga trocou de número. O banco mandou de um endereço novo."]
+  ],
 
-// 1: rule tester
-$("#ruleBtn").onclick=()=>{
-  const r=$("#rule").value.toLowerCase(), o=$("#ruleOut");
-  if(!r.trim()){o.textContent="Escreva uma regra primeiro.";o.className="out";return}
-  const tests=[["grát","Sua regra pega a mensagem C, que é da sua amiga."],["gratis","Sua regra pega a mensagem C, que é da sua amiga."],["link","Sua regra pega a mensagem B, que é do seu banco."],["clique","E a mensagem do banco que diz \"clique para ver a fatura\"?"],["maiúsc","E um e-mail urgente do trabalho escrito em caixa alta?"],["maiusc","E um e-mail urgente do trabalho escrito em caixa alta?"],["!","E a amiga animada que usa três exclamações?"],["iphone","Funciona hoje. Amanhã o golpe oferece um Galaxy."],["ganh","E o e-mail do RH avisando que você ganhou um dia de folga?"],["conhec","Sua amiga trocou de número. O banco mandou de um endereço novo."],["remetente","Sua amiga trocou de número. O banco mandou de um endereço novo."]];
-  const hit=tests.find(t=>r.includes(t[0]));
-  o.className="out bad";
-  o.textContent=hit?hit[1]:"Boa regra. Agora imagine 10 mil e-mails diferentes por dia: quantas exceções ela precisaria? Abra o Revelar.";
+  // bloco 2 — cartões
+  learnOk: "Acertou em cheio. Abra o Revelar para ver o critério.",
+  learnBad: "Quase. Verde = você acertou, vermelho = errou. O critério está no Revelar.",
+
+  // eixos e etiquetas das frutas (blocos 3, 6, 7)
+  axWeight: "peso (g)",
+  axSweet: "doçura",
+  apple: "maçã",
+  applePl: "maçãs",
+  orange: "laranja",
+  orangePl: "laranjas",
+
+  // bloco 4 — preço e quiz
+  priceLabel: "R$ {v} mil",
+  quizC: "classificação",
+  quizR: "regressão",
+  quizAnswer: "  → é {a}",
+  quizScore: "{right} de {total}. ",
+  quizPerfect: "Perfeito.",
+  quizHint: "Dica: a entrada não importa; olhe só o tipo da resposta.",
+  quiz: [
+    ["Prever a temperatura de amanhã", "R"],
+    ["Prever se vai chover amanhã", "C"],
+    ["Ler o dígito escrito à mão em um cheque", "C"],
+    ["Estimar a idade de uma pessoa pela foto", "R"],
+    ["Dizer se um exame indica tumor benigno ou maligno", "C"],
+    ["Prever quantos dias um paciente ficará internado", "R"]
+  ],
+
+  // bloco 5 — regressão
+  areaTick: "{v} m²",
+  priceTick: "{v}k",
+  errValue: "{v} mil",
+  regFormula: "preço = {a} × área {sign} {b}",
+
+  // bloco 6 — votação dos vizinhos
+  voteOne: "Votação com o vizinho mais próximo",
+  voteMany: "Votação entre os {k} vizinhos",
+  voteResult: "{vote}: {apples} × {oranges} → o modelo diz {winner}.",
+
+  // bloco 7 — treino e teste
+  barTrain: "nas frutas vistas",
+  barTest: "nas escondidas",
+  scoreTitle: "Nota do modelo (acertos)",
+  scoreHint: "esconda algumas frutas para ter uma nota honesta",
+
+  // bloco 8 — Python no navegador
+  pyDownload: "Baixando o Python…",
+  pySklearn: "Baixando o scikit-learn…",
+  pyReady: "Pronto. Rode quantas vezes quiser.",
+  pyNetError: "Não foi possível baixar o Python. Confira a conexão e tente de novo.",
+  pyCodeError: "Deu erro no código (veja abaixo). Corrija e rode de novo.",
+  vizDownload: "Baixando o matplotlib…",
+  vizReady: "Pronto. Mova o k para redesenhar.",
+  vizLoading: "Baixando…",
+  vizDone: "Prontas. Mova o k para redesenhar a primeira.",
+  vizFail: "Não foi possível desenhar a figura. Ela precisa baixar o matplotlib da internet — confira a conexão e toque de novo em <em>Carregar exemplos visuais</em>.",
+  vizFailStatus: "Falhou ao baixar. Tente de novo."
 };
-
-// 2: learn cards
-$$("#learnCards .card").forEach(c=>c.onclick=()=>{if(!c.classList.contains("right")&&!c.classList.contains("wrong"))c.classList.toggle("sel")});
-$("#learnBtn").onclick=()=>{let ok=true;$$("#learnCards .card").forEach(c=>{const want=c.dataset.ok==="1",got=c.classList.contains("sel");c.classList.remove("sel");c.classList.add(want===got?"right":"wrong");if(want!==got)ok=false});
-  const o=$("#learnOut");o.className="out "+(ok?"ok":"bad");o.textContent=ok?"Acertou em cheio. Abra o Revelar para ver o critério.":"Quase. Verde = você acertou, vermelho = errou. O critério está no Revelar.";};
-
-// fruit data shared by blocks 3, 6, 7
-let fruits=[];
-function makeFruits(){fruits=[];for(let i=0;i<30;i++){fruits.push({x:150+gauss()*22,y:0.62+gauss()*0.09,c:1});fruits.push({x:205+gauss()*24,y:0.40+gauss()*0.10,c:0})}
-  fruits.forEach(f=>{f.x=Math.max(90,Math.min(280,f.x));f.y=Math.max(0.1,Math.min(0.9,f.y))})}
-makeFruits();
-const P={x0:80,x1:290,y0:0.05,y1:0.95};
-const sx=(x,W,pad)=>pad+(x-P.x0)/(P.x1-P.x0)*(W-2*pad), sy=(y,H,pad)=>H-pad-(y-P.y0)/(P.y1-P.y0)*(H-2*pad);
-function axes(svg,W,H,pad,xl,yl){el("line",{x1:pad,y1:H-pad,x2:W-pad,y2:H-pad,stroke:C.line,"stroke-width":2},svg);el("line",{x1:pad,y1:pad,x2:pad,y2:H-pad,stroke:C.line,"stroke-width":2},svg);
-  el("text",{x:W/2,y:H-8,"font-size":13,"text-anchor":"middle",fill:"#4A5472"},svg).textContent=xl;
-  el("text",{x:14,y:H/2,"font-size":13,"text-anchor":"middle",fill:"#4A5472",transform:`rotate(-90 14 ${H/2})`},svg).textContent=yl}
-const fcol=f=>f.c?C.teal:C.coral;
-
-// 3: labels toggle
-function drawLabels(){const svg=$("#svgLabels"),W=640,H=380,pad=44;svg.innerHTML="";axes(svg,W,H,pad,"peso (g)","doçura");
-  const on=$("#lblToggle").checked;fruits.forEach(f=>el("circle",{cx:sx(f.x,W,pad),cy:sy(f.y,H,pad),r:7,fill:on?fcol(f):C.grey,stroke:"#fff","stroke-width":1.5},svg));
-  $("#lblLegend").style.visibility=on?"visible":"hidden"}
-$("#lblToggle").onchange=drawLabels;drawLabels();
-
-// 4: price / bins / quiz
-$("#priceRange").oninput=e=>{const v=+e.target.value;$("#priceTxt").textContent="R$ "+v+" mil";$("#priceKnob").setAttribute("transform",`translate(${(v-200)/700*240-130} 0)`)};
-const bins=[$("#binA"),$("#binB")];bins.forEach((b,i)=>b.onclick=()=>{bins.forEach((x,j)=>x.querySelector("rect").setAttribute("stroke-width",i===j?6:3))});
-const QZ=[["Prever a temperatura de amanhã","R"],["Prever se vai chover amanhã","C"],["Ler o dígito escrito à mão em um cheque","C"],["Estimar a idade de uma pessoa pela foto","R"],["Dizer se um exame indica tumor benigno ou maligno","C"],["Prever quantos dias um paciente ficará internado","R"]];
-let qdone=0,qright=0;
-QZ.forEach(([t,a])=>{const row=document.createElement("div");row.className="row";row.innerHTML=`<span>${t}</span><button class="ghost small">classificação</button><button class="ghost small">regressão</button>`;
-  const [b1,b2]=row.querySelectorAll("button");const pick=g=>{if(row.dataset.done)return;row.dataset.done=1;qdone++;const ok=g===a;if(ok)qright++;row.classList.add(ok?"right":"wrong");b1.disabled=b2.disabled=true;
-    if(!ok)row.querySelector("span").textContent+=`  → é ${a==="C"?"classificação":"regressão"}`;
-    if(qdone===QZ.length){const o=$("#quizOut");o.className="out "+(qright===QZ.length?"ok":"");o.textContent=`${qright} de ${QZ.length}. `+(qright===QZ.length?"Perfeito.":"Dica: a entrada não importa; olhe só o tipo da resposta.")}};
-  b1.onclick=()=>pick("C");b2.onclick=()=>pick("R");$("#quiz").appendChild(row)});
-
-// 5: regression
-const apts=[[45,310],[52,360],[60,395],[68,440],[75,455],[80,520],[95,560],[110,640],[120,700],[135,760],[150,830],[170,930]].map(([a,p])=>({a,p:p+Math.round(gauss()*35)}));
-const R={W:700,H:400,pad:56,a0:30,a1:190,p0:100,p1:1100};
-const rx=a=>R.pad+(a-R.a0)/(R.a1-R.a0)*(R.W-2*R.pad), ry=p=>R.H-R.pad-(p-R.p0)/(R.p1-R.p0)*(R.H-2*R.pad);
-function drawReg(){const a=+$("#slA").value,b=+$("#slB").value,svg=$("#svgReg");svg.innerHTML="";
-  el("line",{x1:R.pad,y1:R.H-R.pad,x2:R.W-R.pad,y2:R.H-R.pad,stroke:C.line,"stroke-width":2},svg);el("line",{x1:R.pad,y1:R.pad,x2:R.pad,y2:R.H-R.pad,stroke:C.line,"stroke-width":2},svg);
-  [50,100,150].forEach(v=>el("text",{x:rx(v),y:R.H-R.pad+20,"font-size":12,"text-anchor":"middle",fill:"#4A5472"},svg).textContent=v+" m²");
-  [300,600,900].forEach(v=>el("text",{x:R.pad-8,y:ry(v)+4,"font-size":12,"text-anchor":"end",fill:"#4A5472"},svg).textContent=v+"k");
-  let err=0;apts.forEach(d=>{const pred=a*d.a+b;err+=Math.abs(pred-d.p);const y1=ry(Math.max(R.p0,Math.min(R.p1,pred)));el("line",{x1:rx(d.a),y1:ry(d.p),x2:rx(d.a),y2:y1,stroke:"#D63B3B","stroke-width":3,"stroke-opacity":.55},svg)});
-  el("line",{x1:rx(R.a0),y1:ry(a*R.a0+b),x2:rx(R.a1),y2:ry(a*R.a1+b),stroke:"#7B61FF","stroke-width":4,"stroke-linecap":"round"},svg);
-  apts.forEach(d=>el("circle",{cx:rx(d.a),cy:ry(d.p),r:8,fill:C.ink,stroke:"#fff","stroke-width":2},svg));
-  $("#vA").textContent=a.toFixed(1).replace(".",",");$("#vB").textContent=b;$("#errV").textContent=fmt(Math.round(err))+" mil";
-  el("text",{x:R.W-R.pad,y:R.pad-10,"font-size":13,"text-anchor":"end",fill:"#7B61FF"},svg).textContent=`preço = ${a.toFixed(1).replace(".",",")} × área ${b<0?"−":"+"} ${Math.abs(b)}`}
-$("#slA").oninput=drawReg;$("#slB").oninput=drawReg;drawReg();
-$("#fitBtn").onclick=()=>{const n=apts.length,mx=apts.reduce((s,d)=>s+d.a,0)/n,my=apts.reduce((s,d)=>s+d.p,0)/n;let num=0,den=0;apts.forEach(d=>{num+=(d.a-mx)*(d.p-my);den+=(d.a-mx)**2});const A=num/den,B=my-A*mx;
-  const a0=+$("#slA").value,b0=+$("#slB").value;let t=0;const step=()=>{t+=0.03;const e=1-Math.pow(1-Math.min(t,1),3);$("#slA").value=(a0+(A-a0)*e).toFixed(2);$("#slB").value=Math.round(b0+(B-b0)*e);drawReg();if(t<1)requestAnimationFrame(step)};step()};
-
-// 6: kNN playground
-let novo=null;const K6={W:700,H:420,pad:48};
-const knn=(pt,data,k)=>{const d=data.map(f=>({f,d:Math.hypot((f.x-pt.x)/(P.x1-P.x0),(f.y-pt.y)/(P.y1-P.y0))})).sort((u,v)=>u.d-v.d).slice(0,k);const v1=d.filter(o=>o.f.c===1).length;return{nb:d,c:v1>k/2?1:0,v1,v0:d.length-v1}};
-function drawKnn(){const svg=$("#svgKnn"),{W,H,pad}=K6,k=+$("#slK").value;svg.innerHTML="";$("#vK").textContent=k;
-  if($("#mapToggle").checked){const g=el("g",{"shape-rendering":"crispEdges"},svg);const nx=46,ny=28,cw=(W-2*pad)/nx,ch=(H-2*pad)/ny;for(let i=0;i<nx;i++)for(let j=0;j<ny;j++){const x=P.x0+(i+.5)/nx*(P.x1-P.x0),y=P.y0+(j+.5)/ny*(P.y1-P.y0);const r=knn({x,y},fruits,k);el("rect",{x:sx(x,W,pad)-cw/2,y:sy(y,H,pad)-ch/2,width:cw+.5,height:ch+.5,fill:r.c?C.teal:C.coral,opacity:.16},g)}}
-  axes(svg,W,H,pad,"peso (g)","doçura");
-  if(novo){const r=knn(novo,fruits,k);r.nb.forEach(o=>el("line",{x1:sx(novo.x,W,pad),y1:sy(novo.y,H,pad),x2:sx(o.f.x,W,pad),y2:sy(o.f.y,H,pad),stroke:C.ink,"stroke-width":1.5,"stroke-dasharray":"4 3",opacity:.6},svg));
-    $("#knnOut").innerHTML=`${k===1?"Votação com o vizinho mais próximo":`Votação entre os ${k} vizinhos`}: <span style="color:${C.teal}">${r.v1} maçã</span> × <span style="color:${C.coral}">${r.v0} laranja</span> → o modelo diz <strong>${r.c?"maçã":"laranja"}</strong>.`}
-  fruits.forEach(f=>el("circle",{cx:sx(f.x,W,pad),cy:sy(f.y,H,pad),r:7,fill:fcol(f),stroke:"#fff","stroke-width":1.5},svg));
-  if(novo){el("circle",{cx:sx(novo.x,W,pad),cy:sy(novo.y,H,pad),r:11,fill:"#fff",stroke:C.ink,"stroke-width":3},svg);el("text",{x:sx(novo.x,W,pad),y:sy(novo.y,H,pad)-16,"font-size":13,"text-anchor":"middle"},svg).textContent="?"}}
-$("#svgKnn").addEventListener("click",e=>{const svg=e.currentTarget,r=svg.getBoundingClientRect(),px=(e.clientX-r.left)/r.width*K6.W,py=(e.clientY-r.top)/r.height*K6.H;
-  novo={x:P.x0+(px-K6.pad)/(K6.W-2*K6.pad)*(P.x1-P.x0),y:P.y0+(K6.H-K6.pad-py)/(K6.H-2*K6.pad)*(P.y1-P.y0)};drawKnn()});
-$("#slK").oninput=drawKnn;$("#mapToggle").onchange=drawKnn;
-$("#shuffleBtn").onclick=()=>{seed=Math.floor(Math.random()*1e6)+1;makeFruits();novo=null;drawLabels();drawKnn();drawSplit()};
-drawKnn();
-
-// 7: train / test
-function drawSplit(){const hide=+$("#slHide").value/100,k=+$("#slK2").value;$("#vHide").textContent=Math.round(hide*100)+"%";$("#vK2").textContent=k;
-  const order=fruits.map((f,i)=>({f,key:((i*2654435761)>>>0)%1000})).sort((a,b)=>a.key-b.key);const nHide=Math.round(order.length*hide);
-  const test=order.slice(0,nHide).map(o=>o.f),train=order.slice(nHide).map(o=>o.f);
-  const acc=(set,ref)=>set.length?set.filter(f=>knn(f,ref,Math.min(k,ref.length)).c===f.c).length/set.length:null;
-  const aTr=acc(train,train),aTe=acc(test,train);
-  const svg=$("#svgSplit"),W=340,H=300,pad=34;svg.innerHTML="";axes(svg,W,H,pad,"peso (g)","doçura");
-  train.forEach(f=>el("circle",{cx:sx(f.x,W,pad),cy:sy(f.y,H,pad),r:5.5,fill:fcol(f),stroke:"#fff","stroke-width":1},svg));
-  test.forEach(f=>el("circle",{cx:sx(f.x,W,pad),cy:sy(f.y,H,pad),r:5.5,fill:"#fff",stroke:fcol(f),"stroke-width":2,"stroke-dasharray":"2 2"},svg));
-  const s2=$("#svgScore");s2.innerHTML="";const bars=[["nas frutas vistas",aTr,C.ink],["nas escondidas",aTe,"#7B61FF"]];
-  bars.forEach(([n,v,c],i)=>{const x=70+i*140,base=250,h=v==null?0:v*170;el("rect",{x,y:base-h,width:80,height:h,rx:8,fill:c},s2);
-    el("text",{x:x+40,y:base-h-10,"font-size":20,"text-anchor":"middle",fill:c},s2).textContent=v==null?"—":Math.round(v*100)+"%";
-    el("text",{x:x+40,y:base+20,"font-size":12,"text-anchor":"middle",fill:"#4A5472"},s2).textContent=n});
-  el("line",{x1:40,y1:250,x2:300,y2:250,stroke:C.line,"stroke-width":2},s2);el("text",{x:170,y:22,"font-size":14,"text-anchor":"middle"},s2).textContent="Nota do modelo (acertos)";
-  if(aTe==null)el("text",{x:170,y:140,"font-size":12,"text-anchor":"middle",fill:"#4A5472"},s2).textContent="esconda algumas frutas para ter uma nota honesta"}
-$("#slHide").oninput=drawSplit;$("#slK2").oninput=drawSplit;drawSplit();
-
-// realce de sintaxe minimo para os paineis de codigo (sem dependencia externa)
-const PY_RE=/(#[^\n]*)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|\b(\d+\.?\d*)\b|\b(from|import|as|def|return|print|if|else|elif|for|in|while|with|class|None|True|False|and|or|not|lambda)\b/g;
-const esc=t=>t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-function highlight(src){let out="",last=0,m;PY_RE.lastIndex=0;
-  while((m=PY_RE.exec(src))!==null){out+=esc(src.slice(last,m.index));
-    const cls=m[1]?"c":m[2]?"s":m[3]?"n":"k";out+=`<span class="${cls}">${esc(m[0])}</span>`;last=PY_RE.lastIndex}
-  return out+esc(src.slice(last))}
-$$("pre code.py").forEach(c=>{c.innerHTML=highlight(c.textContent)});
-
-// 8: pyodide
-let pyReady=null;
-async function getPy(){if(pyReady)return pyReady;pyReady=(async()=>{$("#pyStatus").textContent="Baixando o Python…";
-  await new Promise((res,rej)=>{const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/pyodide/v0.27.5/full/pyodide.js";s.onload=res;s.onerror=()=>rej(new Error("Não foi possível baixar o Python. Confira a conexão e tente de novo."));document.head.appendChild(s)});
-  const py=await loadPyodide({indexURL:"https://cdn.jsdelivr.net/pyodide/v0.27.5/full/"});$("#pyStatus").textContent="Baixando o scikit-learn…";await py.loadPackage(["scikit-learn"]);$("#pyStatus").textContent="Pronto. Rode quantas vezes quiser.";return py})();
-  pyReady.catch(()=>{pyReady=null});return pyReady}
-$("#runBtn").onclick=async()=>{const btn=$("#runBtn"),out=$("#pyOut");btn.disabled=true;out.textContent="";
-  try{const py=await getPy();py.setStdout({batched:s=>out.textContent+=s+"\n"});py.setStderr({batched:s=>out.textContent+=s+"\n"});await py.runPythonAsync($("#py").value)}
-  catch(e){out.textContent+=String(e).split("\n").slice(-3).join("\n");$("#pyStatus").textContent="Deu erro no código (veja abaixo). Corrija e rode de novo."}
-  btn.disabled=false};
-
-// 8b: exemplos visuais com matplotlib (so baixa quando o aluno pede)
-let vizReady=null;
-function getViz(){if(vizReady)return vizReady;
-  vizReady=(async()=>{const py=await getPy();$("#pyStatus").textContent="Baixando o matplotlib…";
-    await py.loadPackage(["matplotlib"]);$("#pyStatus").textContent="Pronto. Mova o k para redesenhar.";return py})();
-  vizReady.catch(()=>{vizReady=null});return vizReady}
-const figFail=(boxId,msg)=>{$("#"+boxId).classList.remove("busy");$("#"+boxId).innerHTML=`<div class="figmsg">${msg}</div>`};
-async function drawFig(boxId,imgId,code,globals){const box=$("#"+boxId);box.classList.add("busy");
-  try{const py=await getViz();for(const g in globals)py.globals.set(g,globals[g]);
-    const b64=await py.runPythonAsync(code);
-    let img=$("#"+imgId);if(!img){box.innerHTML=`<img id="${imgId}">`;img=$("#"+imgId)}
-    img.src="data:image/png;base64,"+b64;box.classList.remove("busy");return true}
-  catch(e){console.warn(e);
-    figFail(boxId,"Não foi possível desenhar a figura. Ela precisa baixar o matplotlib da internet — confira a conexão e toque de novo em <em>Carregar exemplos visuais</em>.");
-    $("#pyStatus").textContent="Falhou ao baixar. Tente de novo.";$("#vizBtn").disabled=false;return false}}
-const drawKnnFig=()=>drawFig("figKnn","imgKnn",$("#codeKnn").textContent,{k:+$("#slKviz").value});
-const drawTreeFig=()=>drawFig("figTree","imgTree",$("#codeTree").textContent,{});
-$("#vizBtn").onclick=async()=>{$("#vizBtn").disabled=true;$("#vizWrap").hidden=false;$("#vizNote").textContent="Baixando…";
-  const ok=await drawKnnFig();if(ok)await drawTreeFig();
-  if(ok)$("#vizNote").textContent="Prontas. Mova o k para redesenhar a primeira."};
-let kTimer=null;
-$("#slKviz").oninput=e=>{$("#vKviz").textContent=e.target.value;clearTimeout(kTimer);kTimer=setTimeout(drawKnnFig,260)};
 </script>
+<script src="assets/app.js"></script>
 </body>
 </html>
