@@ -71,12 +71,12 @@
 </div></details>
 </div></section>
 
-<section class="block" id="s3"><div class="wrap wide">
+<section class="block" id="s3"><div class="wrap">
 <div class="eyebrow">Bloco 3</div>
 <h2>Tem gabarito ou não?</h2>
 <p>Uma feira. Alguém pesou e provou 60 frutas e anotou duas coisas de cada uma: <strong>peso</strong> e <strong>doçura</strong>. Cada bolinha abaixo é uma fruta.</p>
 <div class="q">Olhando só as bolinhas cinzas, o que dá para descobrir? E o que muda quando ligamos as etiquetas?</div>
-<div class="widget">
+<div class="widget wide">
 <div class="ctrls"><label><input type="checkbox" id="lblToggle"> Mostrar etiquetas (qual fruta é)</label></div>
 <svg id="svgLabels" viewBox="0 0 640 380" width="100%" aria-label="Gráfico de frutas"></svg>
 <div class="legend" id="lblLegend" style="visibility:hidden"><span><i class="dot" style="background:var(--coral)"></i>laranja</span><span><i class="dot" style="background:var(--teal)"></i>maçã</span></div>
@@ -129,16 +129,16 @@
 <div class="widget"><div class="quiz" id="quiz"></div><div class="out" id="quizOut"></div></div>
 </div></section>
 
-<section class="block" id="s5"><div class="wrap wide">
+<section class="block" id="s5"><div class="wrap">
 <div class="eyebrow">Bloco 5</div>
 <h2>Um modelo é uma fórmula com números em branco</h2>
 <p>Vamos ficar na regressão por um instante, porque ela mostra a ideia mais importante da aula de forma nua. Abaixo, 12 apartamentos de um mesmo bairro: <strong>área</strong> no eixo horizontal, <strong>preço</strong> no vertical.</p>
 <div class="q">Desenhe uma reta que "explique" esses pontos. Que dois números você precisa escolher?</div>
-<div class="widget">
+<div class="widget wide">
 <div class="formula">preço = <span class="a">a</span> × área + <span class="b">b</span></div>
 <div class="ctrls">
-<label><span style="color:var(--marker);background:var(--ink);padding:0 6px;border-radius:4px">a</span> inclinação <input type="range" id="slA" min="-8" max="16" step="0.1" value="-5"> <span class="val" id="vA">-5,0</span></label>
-<label><span style="color:#8BE9B4;background:var(--ink);padding:0 6px;border-radius:4px">b</span> ponto de partida <input type="range" id="slB" min="-400" max="900" step="5" value="850"> <span class="val" id="vB">850</span></label>
+<label><span><span style="color:var(--marker);background:var(--ink);padding:0 6px;border-radius:4px">a</span> inclinação</span> <input type="range" id="slA" min="-8" max="16" step="0.1" value="-5"> <span class="val" id="vA">-5,0</span></label>
+<label><span><span style="color:#8BE9B4;background:var(--ink);padding:0 6px;border-radius:4px">b</span> ponto de partida</span> <input type="range" id="slB" min="-400" max="900" step="5" value="850"> <span class="val" id="vB">850</span></label>
 <button id="fitBtn">Deixar o computador aprender</button>
 </div>
 <svg id="svgReg" viewBox="0 0 700 400" width="100%" aria-label="Gráfico área versus preço"></svg>
@@ -165,12 +165,12 @@ print(modelo.intercept_)       # o "b" do slider: o ponto de partida</code></pre
 </div></details>
 </div></section>
 
-<section class="block" id="s6"><div class="wrap wide">
+<section class="block" id="s6"><div class="wrap">
 <div class="eyebrow">Bloco 6</div>
 <h2>Um modelo sem fórmula: vizinhos mais próximos</h2>
 <p>De volta às frutas, agora com as etiquetas ligadas. Chegou uma fruta nova que ninguém provou. Só sabemos o peso e a doçura.</p>
 <div class="q">Você não sabe fórmula nenhuma. Como chuta se é maçã ou laranja? Toque no gráfico para colocar a fruta nova.</div>
-<div class="widget">
+<div class="widget wide">
 <div class="ctrls">
 <label>k (quantos vizinhos consultar) <input type="range" id="slK" min="1" max="25" step="2" value="1"> <span class="val" id="vK">1</span></label>
 <label><input type="checkbox" id="mapToggle"> Pintar o mapa de decisão</label>
@@ -200,7 +200,7 @@ print(modelo.predict(fruta_nova))             # a etiqueta que venceu a votaçã
 </div></details>
 <h3 style="margin-top:30px">Em câmera lenta</h3>
 <p style="font-size:16px;color:var(--ink-2)">O Revelar descreveu três passos. Veja os três acontecendo.</p>
-<div class="widget">
+<div class="widget wide">
 <div class="ctrls">
 <button id="stepBtn">Ver o passo a passo</button>
 <label id="stepKWrap">k <span class="seg" id="stepK" role="group" aria-label="k"><button class="ghost small" aria-pressed="false">1</button><button class="ghost small" aria-pressed="true">3</button><button class="ghost small" aria-pressed="false">5</button></span></label>
@@ -210,12 +210,12 @@ print(modelo.predict(fruta_nova))             # a etiqueta que venceu a votaçã
 </div>
 </div></section>
 
-<section class="block" id="s7"><div class="wrap wide">
+<section class="block" id="s7"><div class="wrap">
 <div class="eyebrow">Bloco 7</div>
 <h2>A armadilha do 100%</h2>
 <p>Vamos dar uma nota ao modelo. Pegamos as 60 frutas conhecidas, perguntamos ao k-NN a etiqueta de cada uma e contamos os acertos.</p>
 <div class="q">Com k = 1, qual nota o modelo tira nas frutas que ele já conhece? Podemos entregar esse modelo para a feira?</div>
-<div class="widget">
+<div class="widget wide">
 <div class="ctrls">
 <label>Frutas escondidas para o teste <input type="range" id="slHide" min="0" max="80" step="5" value="0"> <span class="val" id="vHide">0%</span></label>
 <label>k <input type="range" id="slK2" min="1" max="25" step="2" value="1"> <span class="val" id="vK2">1</span></label>

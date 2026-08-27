@@ -71,12 +71,12 @@
 </div></details>
 </div></section>
 
-<section class="block" id="s3"><div class="wrap wide">
+<section class="block" id="s3"><div class="wrap">
 <div class="eyebrow">Block 3</div>
 <h2>Is there an answer key or not?</h2>
 <p>A farmers' market. Someone weighed and tasted 60 pieces of fruit and wrote down two things about each: <strong>weight</strong> and <strong>sweetness</strong>. Every dot below is one piece of fruit.</p>
 <div class="q">Looking only at the grey dots, what can you figure out? And what changes when we switch the labels on?</div>
-<div class="widget">
+<div class="widget wide">
 <div class="ctrls"><label><input type="checkbox" id="lblToggle"> Show labels (which fruit it is)</label></div>
 <svg id="svgLabels" viewBox="0 0 640 380" width="100%" aria-label="Fruit chart"></svg>
 <div class="legend" id="lblLegend" style="visibility:hidden"><span><i class="dot" style="background:var(--coral)"></i>orange</span><span><i class="dot" style="background:var(--teal)"></i>apple</span></div>
@@ -129,16 +129,16 @@
 <div class="widget"><div class="quiz" id="quiz"></div><div class="out" id="quizOut"></div></div>
 </div></section>
 
-<section class="block" id="s5"><div class="wrap wide">
+<section class="block" id="s5"><div class="wrap">
 <div class="eyebrow">Block 5</div>
 <h2>A model is a formula with blanks in it</h2>
 <p>Let us stay with regression for a moment, because it shows the most important idea of the class stripped bare. Below, 12 apartments from the same neighborhood: <strong>floor area</strong> on the horizontal axis, <strong>price</strong> on the vertical one.</p>
 <div class="q">Draw a line that "explains" these points. Which two numbers do you have to choose?</div>
-<div class="widget">
+<div class="widget wide">
 <div class="formula">price = <span class="a">a</span> × area + <span class="b">b</span></div>
 <div class="ctrls">
-<label><span style="color:var(--marker);background:var(--ink);padding:0 6px;border-radius:4px">a</span> slope <input type="range" id="slA" min="-8" max="16" step="0.1" value="-5"> <span class="val" id="vA">-5.0</span></label>
-<label><span style="color:#8BE9B4;background:var(--ink);padding:0 6px;border-radius:4px">b</span> starting point <input type="range" id="slB" min="-400" max="900" step="5" value="850"> <span class="val" id="vB">850</span></label>
+<label><span><span style="color:var(--marker);background:var(--ink);padding:0 6px;border-radius:4px">a</span> slope</span> <input type="range" id="slA" min="-8" max="16" step="0.1" value="-5"> <span class="val" id="vA">-5.0</span></label>
+<label><span><span style="color:#8BE9B4;background:var(--ink);padding:0 6px;border-radius:4px">b</span> starting point</span> <input type="range" id="slB" min="-400" max="900" step="5" value="850"> <span class="val" id="vB">850</span></label>
 <button id="fitBtn">Let the computer learn</button>
 </div>
 <svg id="svgReg" viewBox="0 0 700 400" width="100%" aria-label="Area versus price chart"></svg>
@@ -165,12 +165,12 @@ print(model.intercept_)        # the "b" slider: the starting point</code></pre>
 </div></details>
 </div></section>
 
-<section class="block" id="s6"><div class="wrap wide">
+<section class="block" id="s6"><div class="wrap">
 <div class="eyebrow">Block 6</div>
 <h2>A model with no formula: nearest neighbors</h2>
 <p>Back to the fruit, labels switched on this time. A new piece of fruit arrives that nobody has tasted. All we know is its weight and its sweetness.</p>
 <div class="q">You know no formula at all. How do you guess apple or orange? Tap the chart to drop the new fruit in.</div>
-<div class="widget">
+<div class="widget wide">
 <div class="ctrls">
 <label>k (how many neighbors to ask) <input type="range" id="slK" min="1" max="25" step="2" value="1"> <span class="val" id="vK">1</span></label>
 <label><input type="checkbox" id="mapToggle"> Paint the decision map</label>
@@ -200,7 +200,7 @@ print(model.predict(new_fruit))               # the label that won the vote</cod
 </div></details>
 <h3 style="margin-top:30px">In slow motion</h3>
 <p style="font-size:16px;color:var(--ink-2)">The Reveal described three steps. Watch all three happen.</p>
-<div class="widget">
+<div class="widget wide">
 <div class="ctrls">
 <button id="stepBtn">Watch it step by step</button>
 <label id="stepKWrap">k <span class="seg" id="stepK" role="group" aria-label="k"><button class="ghost small" aria-pressed="false">1</button><button class="ghost small" aria-pressed="true">3</button><button class="ghost small" aria-pressed="false">5</button></span></label>
@@ -210,12 +210,12 @@ print(model.predict(new_fruit))               # the label that won the vote</cod
 </div>
 </div></section>
 
-<section class="block" id="s7"><div class="wrap wide">
+<section class="block" id="s7"><div class="wrap">
 <div class="eyebrow">Block 7</div>
 <h2>The 100% trap</h2>
 <p>Let us grade the model. We take the 60 known pieces of fruit, ask the k-NN for the label of each one, and count the hits.</p>
 <div class="q">With k = 1, what score does the model get on fruit it already knows? Can we ship that model to the market?</div>
-<div class="widget">
+<div class="widget wide">
 <div class="ctrls">
 <label>Fruit hidden for testing <input type="range" id="slHide" min="0" max="80" step="5" value="0"> <span class="val" id="vHide">0%</span></label>
 <label>k <input type="range" id="slK2" min="1" max="25" step="2" value="1"> <span class="val" id="vK2">1</span></label>
