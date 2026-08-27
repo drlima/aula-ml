@@ -138,7 +138,7 @@ $("#runBtn").onclick=async()=>{const btn=$("#runBtn"),out=$("#pyOut");btn.disabl
 let vizReady=null;
 function getViz(){if(vizReady)return vizReady;
   vizReady=(async()=>{const py=await getPy();$("#pyStatus").textContent=S.vizDownload;
-    await py.loadPackage(["matplotlib"]);$("#pyStatus").textContent=S.vizReady;return py})();
+    await py.loadPackage(["matplotlib"]);$("#pyStatus").textContent=S.pyReady;return py})();
   vizReady.catch(()=>{vizReady=null});return vizReady}
 const figFail=(boxId,msg)=>{$("#"+boxId).classList.remove("busy");$("#"+boxId).innerHTML=`<div class="figmsg">${msg}</div>`};
 async function drawFig(boxId,imgId,code,globals){const box=$("#"+boxId);box.classList.add("busy");
